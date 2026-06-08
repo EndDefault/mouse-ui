@@ -17,6 +17,7 @@
 - [x] 버전 관리 및 체크리스트 작성
 - [x] 큰 방향 변경 기록 문서 작성
 - [x] Gitmoji 커밋 규칙 정리
+- [x] PR 작성 규칙 정리
 - [ ] React 프로젝트 초기 설정
 - [ ] `v0.1.0` 구현 시작
 
@@ -40,6 +41,7 @@ UI 데이터
 - [버전 관리 및 체크리스트](docs/version_checklist.md)
 - [변경 기록](docs/change_log.md)
 - [커밋 규칙](docs/commit_convention.md)
+- [PR 작성 규칙](docs/pr_convention.md)
 
 ## 실행 방법
 
