@@ -9,7 +9,32 @@ export function createComponent(type, order) {
     return createTextComponent(order);
   }
 
+  if (type === COMPONENT_TYPES.INPUT) {
+    return createInputComponent(order);
+  }
+
   throw new Error(`Unsupported component type: ${type}`);
+}
+
+function createInputComponent(order) {
+  const offset = (order - 1) * 16;
+
+  return {
+    id: `input-${order}`,
+    type: COMPONENT_TYPES.INPUT,
+    label: "이메일",
+    placeholder: "이메일을 입력하세요",
+    inputType: "email",
+    x: 128 + offset,
+    y: 120 + offset,
+    width: 240,
+    height: 68,
+    style: {
+      backgroundColor: "#ffffff",
+      color: "#24211f",
+      borderRadius: 8
+    }
+  };
 }
 
 function createTextComponent(order) {

@@ -1,6 +1,7 @@
 import { COMPONENT_TYPES } from "../model/componentTypes.js";
 import { EmptyInspector } from "./EmptyInspector.jsx";
 import { ColorPropertyGroup } from "./fields/ColorPropertyGroup.jsx";
+import { InputPropertyGroup } from "./fields/InputPropertyGroup.jsx";
 import { PositionPropertyGroup } from "./fields/PositionPropertyGroup.jsx";
 import { RadiusProperty } from "./fields/RadiusProperty.jsx";
 import { SizePropertyGroup } from "./fields/SizePropertyGroup.jsx";
@@ -46,6 +47,10 @@ export function InspectorPanel({ component, onChangeComponent }) {
           value={component.text}
           onChange={(text) => updateComponent({ text })}
         />
+      ) : null}
+
+      {component.type === COMPONENT_TYPES.INPUT ? (
+        <InputPropertyGroup component={component} onChange={updateComponent} />
       ) : null}
 
       <PositionPropertyGroup

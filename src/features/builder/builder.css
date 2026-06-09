@@ -197,6 +197,30 @@
   pointer-events: none;
 }
 
+.canvas-input-item {
+  display: grid;
+  grid-template-rows: 18px minmax(0, 1fr);
+  width: 100%;
+  height: 100%;
+  color: var(--input-color);
+  font-size: 12px;
+  font-weight: 800;
+  pointer-events: none;
+}
+
+.canvas-input-item input {
+  min-width: 0;
+  width: 100%;
+  height: 100%;
+  padding: 0 12px;
+  border: 1px solid #d8cfc3;
+  border-radius: var(--input-radius);
+  color: var(--input-color);
+  background: var(--input-bg);
+  font-size: 14px;
+  font-weight: 700;
+}
+
 .builder-code-panel {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
