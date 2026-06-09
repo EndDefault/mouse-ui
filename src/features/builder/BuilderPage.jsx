@@ -25,9 +25,9 @@ export function BuilderPage() {
         <div className="builder-topbar">
           <div>
             <h1>mouse-ui</h1>
-            <span>v0.3.0</span>
+            <span>v0.4.0</span>
           </div>
-          <strong>속성 패널</strong>
+          <strong>컴포넌트 확장</strong>
         </div>
       }
       toolbar={<Toolbar onAddComponent={addComponent} />}
