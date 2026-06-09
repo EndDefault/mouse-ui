@@ -1,0 +1,231 @@
+.builder-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  min-width: 0;
+  padding: 0 20px;
+}
+
+.builder-topbar div {
+  display: flex;
+  align-items: baseline;
+  min-width: 0;
+  gap: 10px;
+}
+
+.builder-topbar h1 {
+  margin: 0;
+  color: #24211f;
+  font-size: 20px;
+  font-weight: 800;
+  line-height: 1;
+}
+
+.builder-topbar span {
+  color: #776f64;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.builder-topbar strong {
+  color: #4b4741;
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.builder-toolbar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+  padding: 18px 14px;
+  gap: 12px;
+}
+
+.builder-toolbar h2,
+.builder-code-panel h2,
+.builder-canvas h2 {
+  margin: 0;
+  color: #514b44;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.builder-tool-list {
+  display: grid;
+  gap: 8px;
+}
+
+.tool-button {
+  display: grid;
+  grid-template-columns: 28px minmax(0, 1fr);
+  align-items: center;
+  width: 100%;
+  min-height: 42px;
+  padding: 8px 10px;
+  border: 1px solid #d8cfc3;
+  border-radius: 8px;
+  color: #2f2a25;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.tool-button:hover {
+  border-color: #2f9e8f;
+  background: #eef8f5;
+}
+
+.tool-button:focus-visible {
+  outline: 3px solid #f0b35a;
+  outline-offset: 2px;
+}
+
+.tool-button-icon {
+  display: inline-grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  color: #ffffff;
+  background: #2f9e8f;
+  font-size: 18px;
+  font-weight: 800;
+}
+
+.tool-button-label {
+  overflow: hidden;
+  font-size: 14px;
+  font-weight: 800;
+  text-align: left;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.builder-canvas {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100%;
+  min-height: 0;
+  padding: 18px;
+  gap: 12px;
+}
+
+.builder-canvas-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.builder-canvas-header span {
+  color: #776f64;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.canvas-stage {
+  min-height: 0;
+  overflow: auto;
+}
+
+.canvas-viewport {
+  position: relative;
+  width: 720px;
+  height: 480px;
+  border: 1px solid #cfc6ba;
+  border-radius: 8px;
+  background:
+    linear-gradient(#f8f6f1 1px, transparent 1px),
+    linear-gradient(90deg, #f8f6f1 1px, transparent 1px),
+    #ffffff;
+  background-size: 24px 24px;
+  box-shadow: 0 18px 42px rgba(54, 47, 38, 0.12);
+}
+
+.canvas-empty-state {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: #8a8175;
+  font-size: 15px;
+  font-weight: 800;
+}
+
+.canvas-item-frame {
+  position: absolute;
+  display: grid;
+  border: 2px solid transparent;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.canvas-item-frame.is-selected {
+  border-color: #f06f47;
+  box-shadow: 0 0 0 4px rgba(240, 111, 71, 0.2);
+}
+
+.canvas-button-item {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  border-radius: inherit;
+  color: var(--button-color);
+  background: var(--button-bg);
+  font-size: 14px;
+  font-weight: 800;
+  pointer-events: none;
+}
+
+.builder-code-panel {
+  display: grid;
+  grid-template-rows: auto minmax(0, 1fr);
+  height: 100%;
+  min-height: 0;
+  padding: 18px 16px;
+  gap: 12px;
+}
+
+.builder-code-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+}
+
+.builder-code-header span {
+  color: #776f64;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.code-block {
+  min-width: 0;
+  min-height: 0;
+  margin: 0;
+  padding: 14px;
+  overflow: auto;
+  border: 1px solid #d8cfc3;
+  border-radius: 8px;
+  color: #f8f4eb;
+  background: #24211f;
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.code-block code {
+  font-family:
+    "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+.code-empty {
+  display: grid;
+  place-items: center;
+  min-height: 160px;
+  border: 1px dashed #cfc6ba;
+  border-radius: 8px;
+  color: #8a8175;
+  font-size: 14px;
+  font-weight: 800;
+}
