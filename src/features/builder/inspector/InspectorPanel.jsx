@@ -40,7 +40,8 @@ export function InspectorPanel({ component, onChangeComponent }) {
         </div>
       </dl>
 
-      {component.type === COMPONENT_TYPES.BUTTON ? (
+      {component.type === COMPONENT_TYPES.BUTTON ||
+      component.type === COMPONENT_TYPES.TEXT ? (
         <TextProperty
           value={component.text}
           onChange={(text) => updateComponent({ text })}
@@ -57,15 +58,19 @@ export function InspectorPanel({ component, onChangeComponent }) {
         height={component.height}
         onChange={updateComponent}
       />
-      <ColorPropertyGroup
-        backgroundColor={component.style.backgroundColor}
-        color={component.style.color}
-        onChange={updateStyle}
-      />
-      <RadiusProperty
-        value={component.style.borderRadius}
-        onChange={(borderRadius) => updateStyle({ borderRadius })}
-      />
+      {component.style.backgroundColor && component.style.borderRadius != null ? (
+        <>
+          <ColorPropertyGroup
+            backgroundColor={component.style.backgroundColor}
+            color={component.style.color}
+            onChange={updateStyle}
+          />
+          <RadiusProperty
+            value={component.style.borderRadius}
+            onChange={(borderRadius) => updateStyle({ borderRadius })}
+          />
+        </>
+      ) : null}
     </section>
   );
 }

@@ -1,3 +1,4 @@
 export const COMPONENT_TYPES = {
-  BUTTON: "button"
+  BUTTON: "button",
+  TEXT: "text"
 };

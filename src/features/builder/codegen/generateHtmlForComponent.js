@@ -6,7 +6,29 @@ export function generateHtmlForComponent(component) {
     return generateButtonHtml(component);
   }
 
+  if (component.type === COMPONENT_TYPES.TEXT) {
+    return generateTextHtml(component);
+  }
+
   return "";
+}
+
+function generateTextHtml(component) {
+  const style = [
+    "position:absolute",
+    `left:${component.x}px`,
+    `top:${component.y}px`,
+    `width:${component.width}px`,
+    `height:${component.height}px`,
+    `margin:0`,
+    `color:${component.style.color}`,
+    `font-size:${component.style.fontSize}px`,
+    "font-weight:700",
+    "display:flex",
+    "align-items:center"
+  ].join("; ");
+
+  return `  <p style="${style}">${escapeHtml(component.text)}</p>`;
 }
 
 function generateButtonHtml(component) {

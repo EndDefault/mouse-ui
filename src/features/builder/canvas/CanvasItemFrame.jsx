@@ -1,6 +1,7 @@
 import { Rnd } from "react-rnd";
 import { COMPONENT_TYPES } from "../model/componentTypes.js";
 import { ButtonCanvasItem } from "./renderers/ButtonCanvasItem.jsx";
+import { TextCanvasItem } from "./renderers/TextCanvasItem.jsx";
 
 const RESIZE_HANDLE_STYLES = {
   top: { height: 8, top: -4 },
@@ -54,6 +55,9 @@ export function CanvasItemFrame({ component, isSelected, onSelect, onChange }) {
     >
       {component.type === COMPONENT_TYPES.BUTTON ? (
         <ButtonCanvasItem component={component} />
+      ) : null}
+      {component.type === COMPONENT_TYPES.TEXT ? (
+        <TextCanvasItem component={component} />
       ) : null}
     </Rnd>
   );
