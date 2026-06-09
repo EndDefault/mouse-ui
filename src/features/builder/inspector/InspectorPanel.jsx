@@ -68,6 +68,7 @@ export function InspectorPanel({ component, onChangeComponent }) {
           <ColorPropertyGroup
             backgroundColor={component.style.backgroundColor}
             color={component.style.color}
+            showTextColor={component.style.color != null}
             onChange={updateStyle}
           />
           <RadiusProperty

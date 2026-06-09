@@ -14,7 +14,25 @@ export function generateHtmlForComponent(component) {
     return generateInputHtml(component);
   }
 
+  if (component.type === COMPONENT_TYPES.BOX) {
+    return generateBoxHtml(component);
+  }
+
   return "";
+}
+
+function generateBoxHtml(component) {
+  const style = [
+    "position:absolute",
+    `left:${component.x}px`,
+    `top:${component.y}px`,
+    `width:${component.width}px`,
+    `height:${component.height}px`,
+    `background:${component.style.backgroundColor}`,
+    `border-radius:${component.style.borderRadius}px`
+  ].join("; ");
+
+  return `  <div style="${style}"></div>`;
 }
 
 function generateInputHtml(component) {

@@ -13,7 +13,28 @@ export function createComponent(type, order) {
     return createInputComponent(order);
   }
 
+  if (type === COMPONENT_TYPES.BOX) {
+    return createBoxComponent(order);
+  }
+
   throw new Error(`Unsupported component type: ${type}`);
+}
+
+function createBoxComponent(order) {
+  const offset = (order - 1) * 16;
+
+  return {
+    id: `box-${order}`,
+    type: COMPONENT_TYPES.BOX,
+    x: 144 + offset,
+    y: 136 + offset,
+    width: 180,
+    height: 100,
+    style: {
+      backgroundColor: "#f0b35a",
+      borderRadius: 12
+    }
+  };
 }
 
 function createInputComponent(order) {

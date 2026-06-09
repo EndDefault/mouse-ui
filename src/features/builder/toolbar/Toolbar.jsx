@@ -1,4 +1,5 @@
 import { ButtonTool } from "./ButtonTool.jsx";
+import { BoxTool } from "./BoxTool.jsx";
 import { InputTool } from "./InputTool.jsx";
 import { TextTool } from "./TextTool.jsx";
 
@@ -10,6 +11,7 @@ export function Toolbar({ onAddComponent }) {
         <ButtonTool onAdd={onAddComponent} />
         <TextTool onAdd={onAddComponent} />
         <InputTool onAdd={onAddComponent} />
+        <BoxTool onAdd={onAddComponent} />
       </div>
     </div>
   );

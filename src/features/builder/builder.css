@@ -221,6 +221,14 @@
   font-weight: 700;
 }
 
+.canvas-box-item {
+  width: 100%;
+  height: 100%;
+  border-radius: var(--box-radius);
+  background: var(--box-bg);
+  pointer-events: none;
+}
+
 .builder-code-panel {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);

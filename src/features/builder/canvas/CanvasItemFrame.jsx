@@ -1,5 +1,6 @@
 import { Rnd } from "react-rnd";
 import { COMPONENT_TYPES } from "../model/componentTypes.js";
+import { BoxCanvasItem } from "./renderers/BoxCanvasItem.jsx";
 import { ButtonCanvasItem } from "./renderers/ButtonCanvasItem.jsx";
 import { InputCanvasItem } from "./renderers/InputCanvasItem.jsx";
 import { TextCanvasItem } from "./renderers/TextCanvasItem.jsx";
@@ -62,6 +63,9 @@ export function CanvasItemFrame({ component, isSelected, onSelect, onChange }) {
       ) : null}
       {component.type === COMPONENT_TYPES.INPUT ? (
         <InputCanvasItem component={component} />
+      ) : null}
+      {component.type === COMPONENT_TYPES.BOX ? (
+        <BoxCanvasItem component={component} />
       ) : null}
     </Rnd>
   );
