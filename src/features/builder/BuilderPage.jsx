@@ -7,8 +7,13 @@ import { Toolbar } from "./toolbar/Toolbar.jsx";
 import "./builder.css";
 
 export function BuilderPage() {
-  const { components, selectedId, addComponent, selectComponent } =
-    useBuilderState();
+  const {
+    components,
+    selectedId,
+    addComponent,
+    selectComponent,
+    changeComponent
+  } = useBuilderState();
   const htmlCode = generateHtml(components);
 
   return (
@@ -17,7 +22,7 @@ export function BuilderPage() {
         <div className="builder-topbar">
           <div>
             <h1>mouse-ui</h1>
-            <span>v0.1.0</span>
+            <span>v0.2.0</span>
           </div>
           <strong>기본 UI 빌더</strong>
         </div>
@@ -28,6 +33,7 @@ export function BuilderPage() {
           components={components}
           selectedId={selectedId}
           onSelectComponent={selectComponent}
+          onChangeComponent={changeComponent}
         />
       }
       sidePanel={

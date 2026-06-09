@@ -1,6 +1,11 @@
 import { CanvasViewport } from "./CanvasViewport.jsx";
 
-export function Canvas({ components, selectedId, onSelectComponent }) {
+export function Canvas({
+  components,
+  selectedId,
+  onSelectComponent,
+  onChangeComponent
+}) {
   return (
     <div className="builder-canvas">
       <div className="builder-canvas-header">
@@ -12,6 +17,7 @@ export function Canvas({ components, selectedId, onSelectComponent }) {
           components={components}
           selectedId={selectedId}
           onSelectComponent={onSelectComponent}
+          onChangeComponent={onChangeComponent}
         />
       </div>
     </div>

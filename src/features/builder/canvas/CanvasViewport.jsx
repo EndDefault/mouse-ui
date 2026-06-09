@@ -1,7 +1,12 @@
 import { CanvasEmptyState } from "./CanvasEmptyState.jsx";
 import { CanvasItemFrame } from "./CanvasItemFrame.jsx";
 
-export function CanvasViewport({ components, selectedId, onSelectComponent }) {
+export function CanvasViewport({
+  components,
+  selectedId,
+  onSelectComponent,
+  onChangeComponent
+}) {
   return (
     <div className="canvas-viewport" onClick={() => onSelectComponent(null)}>
       {components.length === 0 ? <CanvasEmptyState /> : null}
@@ -11,6 +16,7 @@ export function CanvasViewport({ components, selectedId, onSelectComponent }) {
           component={component}
           isSelected={component.id === selectedId}
           onSelect={onSelectComponent}
+          onChange={onChangeComponent}
         />
       ))}
     </div>
