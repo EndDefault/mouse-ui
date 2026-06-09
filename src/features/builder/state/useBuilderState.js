@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { createComponent } from "../model/createComponent.js";
+import { updateComponent } from "../model/updateComponent.js";
 
 export function useBuilderState() {
   const [components, setComponents] = useState([]);
@@ -16,10 +17,17 @@ export function useBuilderState() {
     setSelectedId(id);
   }
 
+  function changeComponent(id, patch) {
+    setComponents((currentComponents) => {
+      return updateComponent(currentComponents, id, patch);
+    });
+  }
+
   return {
     components,
     selectedId,
     addComponent,
-    selectComponent
+    selectComponent,
+    changeComponent
   };
 }

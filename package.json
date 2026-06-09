@@ -1,7 +1,7 @@
 {
   "name": "mouse-ui",
   "private": true,
-  "version": "0.1.0",
+  "version": "0.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite --host 127.0.0.1",
@@ -10,7 +10,8 @@
   },
   "dependencies": {
     "react": "^19.0.0",
-    "react-dom": "^19.0.0"
+    "react-dom": "^19.0.0",
+    "react-rnd": "^10.5.3"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^5.0.0",
