@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { AppLayout } from "../../app/AppLayout.jsx";
 import { Canvas } from "./canvas/Canvas.jsx";
 import { CopyCodeButton } from "./code/CopyCodeButton.jsx";
@@ -28,6 +28,9 @@ export function BuilderPage() {
     selectComponents,
     changeComponent,
     moveComponents,
+    copyComponents,
+    pasteComponents,
+    hasClipboard,
     deleteComponent,
     changeCanvasSize,
     changeCanvasViewport,
@@ -36,6 +39,28 @@ export function BuilderPage() {
   const htmlCode = generateHtml(project);
   const selectedComponent =
     components.find((component) => component.id === selectedId) ?? null;
+
+  useEffect(() => {
+    function handleKeyDown(event) {
+      if (isEditableTarget(event.target) || (!event.ctrlKey && !event.metaKey)) {
+        return;
+      }
+
+      if (event.key.toLowerCase() === "c") {
+        event.preventDefault();
+        copyComponents();
+      }
+
+      if (event.key.toLowerCase() === "v") {
+        event.preventDefault();
+        pasteComponents();
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, [copyComponents, pasteComponents]);
 
   function playEnterPreview(componentId) {
     setAnimationPreview((currentPreview) => ({
@@ -92,6 +117,9 @@ export function BuilderPage() {
             onSelectComponents={selectComponents}
             onChangeComponent={changeComponent}
             onMoveComponents={moveComponents}
+            onCopyComponents={copyComponents}
+            onPasteComponents={pasteComponents}
+            hasClipboard={hasClipboard}
             onDeleteComponent={deleteComponent}
             onChangeViewport={changeCanvasViewport}
           />
@@ -112,4 +140,8 @@ export function BuilderPage() {
       }
     />
   );
+}
+
+function isEditableTarget(target) {
+  return ["INPUT", "SELECT", "TEXTAREA"].includes(target?.tagName);
 }

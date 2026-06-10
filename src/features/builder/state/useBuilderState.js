@@ -10,6 +10,7 @@ import { normalizeProject } from "../storage/projectSerializer.js";
 
 export function useBuilderState() {
   const [project, setProject] = useState(() => loadBuilderProject());
+  const [clipboard, setClipboard] = useState(null);
   const { canvas, components, selectedId, selectedIds } = project;
 
   useEffect(() => {
@@ -110,6 +111,63 @@ export function useBuilderState() {
     });
   }
 
+  function copyComponents(ids = selectedIds) {
+    const copiedIds = getCopiedIds(ids, components);
+    const copiedComponents = components.filter((component) =>
+      copiedIds.has(component.id)
+    );
+
+    if (copiedComponents.length > 0) {
+      setClipboard({
+        components: copiedComponents.map(cloneComponent)
+      });
+    }
+  }
+
+  function pasteComponents(options = {}) {
+    if (!clipboard?.components.length) {
+      return;
+    }
+
+    setProject((currentProject) => {
+      const copiedIds = new Set(
+        clipboard.components.map((component) => component.id)
+      );
+      const rootComponents = clipboard.components.filter(
+        (component) => !component.parentId || !copiedIds.has(component.parentId)
+      );
+      const nextIds = createPasteIdMap(
+        clipboard.components,
+        currentProject.components
+      );
+      const pasteDelta = getPasteDelta(rootComponents, options);
+      const nextComponents = clipboard.components.map((component) => {
+        const isRoot = rootComponents.some((root) => root.id === component.id);
+        const nextComponent = cloneComponent(component);
+
+        return {
+          ...nextComponent,
+          id: nextIds.get(component.id),
+          parentId: copiedIds.has(component.parentId)
+            ? nextIds.get(component.parentId)
+            : isRoot && "parentId" in options
+              ? options.parentId
+              : component.parentId,
+          x: isRoot ? Math.max(0, component.x + pasteDelta.x) : component.x,
+          y: isRoot ? Math.max(0, component.y + pasteDelta.y) : component.y
+        };
+      });
+      const nextSelectedIds = nextComponents.map((component) => component.id);
+
+      return touchProject({
+        ...currentProject,
+        components: [...currentProject.components, ...nextComponents],
+        selectedId: nextSelectedIds[0] ?? null,
+        selectedIds: nextSelectedIds
+      });
+    });
+  }
+
   function changeCanvasSize(nextCanvas) {
     setProject((currentProject) => {
       const preset = getCanvasPreset(nextCanvas.presetId);
@@ -157,9 +215,78 @@ export function useBuilderState() {
     changeComponent,
     moveComponents,
     deleteComponent,
+    copyComponents,
+    pasteComponents,
+    hasClipboard: Boolean(clipboard?.components.length),
     changeCanvasSize,
     changeCanvasViewport,
     importProject
+  };
+}
+
+function getCopiedIds(ids, components) {
+  const copiedIds = new Set();
+
+  ids.forEach((id) => {
+    getComponentFamilyIds(id, components).forEach((familyId) => {
+      copiedIds.add(familyId);
+    });
+  });
+
+  return copiedIds;
+}
+
+function cloneComponent(component) {
+  return JSON.parse(JSON.stringify(component));
+}
+
+function createPasteIdMap(copiedComponents, currentComponents) {
+  const counts = new Map();
+  const idMap = new Map();
+
+  currentComponents.forEach((component) => {
+    counts.set(component.type, Math.max(counts.get(component.type) ?? 0, readIdNumber(component.id)));
+  });
+
+  copiedComponents.forEach((component) => {
+    const nextCount = (counts.get(component.type) ?? 0) + 1;
+
+    counts.set(component.type, nextCount);
+    idMap.set(component.id, `${getIdPrefix(component.type)}-${nextCount}`);
+  });
+
+  return idMap;
+}
+
+function getIdPrefix(type) {
+  if (type === "divBox") {
+    return "div-box";
+  }
+
+  return type;
+}
+
+function readIdNumber(id) {
+  const match = String(id).match(/-(\d+)$/);
+
+  return match ? Number(match[1]) : 0;
+}
+
+function getPasteDelta(rootComponents, options) {
+  if (!rootComponents.length) {
+    return { x: 24, y: 24 };
+  }
+
+  if (options.x == null || options.y == null) {
+    return { x: 24, y: 24 };
+  }
+
+  const minX = Math.min(...rootComponents.map((component) => component.x));
+  const minY = Math.min(...rootComponents.map((component) => component.y));
+
+  return {
+    x: Math.round(options.x) - minX,
+    y: Math.round(options.y) - minY
   };
 }
 

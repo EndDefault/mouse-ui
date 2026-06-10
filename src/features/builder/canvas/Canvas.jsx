@@ -11,6 +11,9 @@ export function Canvas({
   onSelectComponents,
   onChangeComponent,
   onMoveComponents,
+  onCopyComponents,
+  onPasteComponents,
+  hasClipboard,
   onDeleteComponent,
   onChangeViewport
 }) {
@@ -35,6 +38,9 @@ export function Canvas({
           onSelectComponents={onSelectComponents}
           onChangeComponent={onChangeComponent}
           onMoveComponents={onMoveComponents}
+          onCopyComponents={onCopyComponents}
+          onPasteComponents={onPasteComponents}
+          hasClipboard={hasClipboard}
           onDeleteComponent={onDeleteComponent}
           onChangeViewport={onChangeViewport}
         />

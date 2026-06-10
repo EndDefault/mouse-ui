@@ -1,6 +1,12 @@
 import { useEffect, useState } from "react";
 
-export function useCanvasContextMenu({ onAddComponent, onDeleteComponent }) {
+export function useCanvasContextMenu({
+  selectedIds = [],
+  onAddComponent,
+  onCopyComponents,
+  onPasteComponents,
+  onDeleteComponent
+}) {
   const [menu, setMenu] = useState(null);
 
   useEffect(() => {
@@ -57,11 +63,40 @@ export function useCanvasContextMenu({ onAddComponent, onDeleteComponent }) {
     closeMenu();
   }
 
+  function copyComponentFromMenu() {
+    if (!menu?.componentId) {
+      return;
+    }
+
+    const ids =
+      selectedIds.includes(menu.componentId) && selectedIds.length > 1
+        ? selectedIds
+        : [menu.componentId];
+
+    onCopyComponents(ids);
+    closeMenu();
+  }
+
+  function pasteComponentFromMenu() {
+    if (!menu) {
+      return;
+    }
+
+    onPasteComponents({
+      parentId: menu.componentId ?? null,
+      x: Math.max(8, Math.round(menu.localX)),
+      y: Math.max(8, Math.round(menu.localY))
+    });
+    closeMenu();
+  }
+
   return {
     menu,
     openMenu,
     closeMenu,
     addComponentToContainer,
+    copyComponentFromMenu,
+    pasteComponentFromMenu,
     deleteComponentFromMenu
   };
 }

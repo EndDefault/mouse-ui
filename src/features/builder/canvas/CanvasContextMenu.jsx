@@ -9,7 +9,15 @@ const MENU_ITEMS = [
   { type: COMPONENT_TYPES.CONTAINER, label: "컨테이너 추가" }
 ];
 
-export function CanvasContextMenu({ menu, onAdd, onDelete, onClose }) {
+export function CanvasContextMenu({
+  menu,
+  canPaste,
+  onAdd,
+  onCopy,
+  onPaste,
+  onDelete,
+  onClose
+}) {
   if (!menu) {
     return null;
   }
@@ -36,10 +44,18 @@ export function CanvasContextMenu({ menu, onAdd, onDelete, onClose }) {
           ))
         : null}
       {menu.componentId ? (
-        <button className="is-danger" type="button" onClick={onDelete}>
-          삭제
-        </button>
+        <>
+          <button type="button" onClick={onCopy}>
+            복사
+          </button>
+          <button className="is-danger" type="button" onClick={onDelete}>
+            삭제
+          </button>
+        </>
       ) : null}
+      <button type="button" disabled={!canPaste} onClick={onPaste}>
+        붙여넣기
+      </button>
       <button type="button" onClick={onClose}>
         닫기
       </button>

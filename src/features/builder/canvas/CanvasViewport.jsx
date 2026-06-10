@@ -18,6 +18,9 @@ export function CanvasViewport({
   onSelectComponents,
   onChangeComponent,
   onMoveComponents,
+  onCopyComponents,
+  onPasteComponents,
+  hasClipboard,
   onDeleteComponent,
   onChangeViewport
 }) {
@@ -32,8 +35,16 @@ export function CanvasViewport({
     openMenu,
     closeMenu,
     addComponentToContainer,
+    copyComponentFromMenu,
+    pasteComponentFromMenu,
     deleteComponentFromMenu
-  } = useCanvasContextMenu({ onAddComponent, onDeleteComponent });
+  } = useCanvasContextMenu({
+    selectedIds,
+    onAddComponent,
+    onCopyComponents,
+    onPasteComponents,
+    onDeleteComponent
+  });
   const {
     stageRef,
     isSpacePressed,
@@ -148,7 +159,10 @@ export function CanvasViewport({
       </div>
       <CanvasContextMenu
         menu={menu}
+        canPaste={hasClipboard}
         onAdd={addComponentToContainer}
+        onCopy={copyComponentFromMenu}
+        onPaste={pasteComponentFromMenu}
         onDelete={deleteComponentFromMenu}
         onClose={closeMenu}
       />
