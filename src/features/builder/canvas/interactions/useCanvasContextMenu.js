@@ -6,7 +6,7 @@ export function useCanvasContextMenu({
   onCopyComponents,
   onPasteComponents,
   onSetComponentLocked,
-  onDeleteComponent
+  onDeleteComponents
 }) {
   const [menu, setMenu] = useState(null);
 
@@ -60,7 +60,12 @@ export function useCanvasContextMenu({
       return;
     }
 
-    onDeleteComponent(menu.componentId);
+    const ids =
+      selectedIds.includes(menu.componentId) && selectedIds.length > 1
+        ? selectedIds
+        : [menu.componentId];
+
+    onDeleteComponents(ids);
     closeMenu();
   }
 

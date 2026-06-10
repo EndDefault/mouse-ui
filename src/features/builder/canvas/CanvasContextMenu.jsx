@@ -59,12 +59,16 @@ export function CanvasContextMenu({
           ) : null}
         </>
       ) : null}
-      <button type="button" disabled={!canPaste} onClick={onPaste}>
-        붙여넣기
-      </button>
-      <button type="button" onClick={onClose}>
-        닫기
-      </button>
+      {menu.componentId ? (
+        <>
+          <button type="button" disabled={!canPaste} onClick={onPaste}>
+            붙여넣기
+          </button>
+          <button type="button" onClick={onClose}>
+            닫기
+          </button>
+        </>
+      ) : null}
     </div>
   );
 }

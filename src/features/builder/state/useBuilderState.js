@@ -79,9 +79,8 @@ export function useBuilderState() {
         };
       }
 
-      const isSelected = currentProject.selectedIds.includes(id);
-      const nextSelectedIds = isSelected
-        ? currentProject.selectedIds.filter((selectedId) => selectedId !== id)
+      const nextSelectedIds = currentProject.selectedIds.includes(id)
+        ? currentProject.selectedIds
         : [...currentProject.selectedIds, id];
 
       return {
@@ -155,8 +154,19 @@ export function useBuilderState() {
   }
 
   function deleteComponent(id) {
+    deleteComponents([id]);
+  }
+
+  function deleteComponents(ids) {
     commitProject((currentProject) => {
-      const deletedIds = getComponentFamilyIds(id, currentProject.components);
+      const deletedIds = new Set();
+
+      ids.forEach((id) => {
+        getComponentFamilyIds(id, currentProject.components).forEach((familyId) => {
+          deletedIds.add(familyId);
+        });
+      });
+
       const nextComponents = currentProject.components.filter(
         (component) => !deletedIds.has(component.id)
       );
@@ -369,6 +379,7 @@ export function useBuilderState() {
     changeComponent,
     moveComponents,
     deleteComponent,
+    deleteComponents,
     setComponentLocked,
     changeStyleDefaultColor,
     applyStyleDefaultToSelected,

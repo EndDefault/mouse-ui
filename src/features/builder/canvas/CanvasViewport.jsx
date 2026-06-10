@@ -22,7 +22,7 @@ export function CanvasViewport({
   onPasteComponents,
   hasClipboard,
   onSetComponentLocked,
-  onDeleteComponent,
+  onDeleteComponents,
   onChangeViewport
 }) {
   const childrenByParent = useMemo(
@@ -46,7 +46,7 @@ export function CanvasViewport({
     onCopyComponents,
     onPasteComponents,
     onSetComponentLocked,
-    onDeleteComponent
+    onDeleteComponents
   });
   const {
     stageRef,

@@ -32,7 +32,7 @@ export function BuilderPage() {
     copyComponents,
     pasteComponents,
     hasClipboard,
-    deleteComponent,
+    deleteComponents,
     setComponentLocked,
     changeStyleDefaultColor,
     applyStyleDefaultToSelected,
@@ -138,7 +138,7 @@ export function BuilderPage() {
             onPasteComponents={pasteComponents}
             hasClipboard={hasClipboard}
             onSetComponentLocked={setComponentLocked}
-            onDeleteComponent={deleteComponent}
+            onDeleteComponents={deleteComponents}
             onChangeViewport={changeCanvasViewport}
           />
           <DockingPanel

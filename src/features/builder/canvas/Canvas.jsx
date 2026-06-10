@@ -15,7 +15,7 @@ export function Canvas({
   onPasteComponents,
   hasClipboard,
   onSetComponentLocked,
-  onDeleteComponent,
+  onDeleteComponents,
   onChangeViewport
 }) {
   return (
@@ -43,7 +43,7 @@ export function Canvas({
           onPasteComponents={onPasteComponents}
           hasClipboard={hasClipboard}
           onSetComponentLocked={onSetComponentLocked}
-          onDeleteComponent={onDeleteComponent}
+          onDeleteComponents={onDeleteComponents}
           onChangeViewport={onChangeViewport}
         />
       </div>
