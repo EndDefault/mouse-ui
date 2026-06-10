@@ -1,3 +1,4 @@
+import { BUILDER_PANEL_TABS } from "../workspace/workspaceSettings.js";
 import { COMPONENT_TYPES } from "../model/componentTypes.js";
 import { getSolidBackgroundColor } from "../model/styleValues.js";
 import { AnimationEditor } from "./AnimationEditor.jsx";
@@ -14,6 +15,7 @@ import "./inspector.css";
 
 export function InspectorPanel({
   component,
+  panelTab = "all",
   animationPreview,
   onChangeComponent,
   onPlayEnterPreview,
@@ -22,6 +24,18 @@ export function InspectorPanel({
   if (!component) {
     return <EmptyInspector />;
   }
+
+  const showAll = panelTab === "all";
+  const showAdjust = showAll || panelTab === BUILDER_PANEL_TABS.ADJUST;
+  const showStyle = showAll || panelTab === BUILDER_PANEL_TABS.STYLE;
+  const showAnimation = showAll || panelTab === BUILDER_PANEL_TABS.ANIMATION;
+  const canEditContent =
+    component.type === COMPONENT_TYPES.BUTTON ||
+    component.type === COMPONENT_TYPES.TEXT ||
+    component.type === COMPONENT_TYPES.INPUT ||
+    component.type === COMPONENT_TYPES.IMAGE;
+  const hasBackgroundControl =
+    component.style.background && component.style.borderRadius != null;
 
   function updateComponent(patch) {
     onChangeComponent(component.id, patch);
@@ -59,33 +73,42 @@ export function InspectorPanel({
         </div>
       </dl>
 
-      {component.type === COMPONENT_TYPES.BUTTON ||
-      component.type === COMPONENT_TYPES.TEXT ? (
-        <TextProperty
-          value={component.props.text}
-          onChange={(text) => updateProps({ text })}
-        />
+      {showAdjust && canEditContent ? (
+        <>
+          {component.type === COMPONENT_TYPES.BUTTON ||
+          component.type === COMPONENT_TYPES.TEXT ? (
+            <TextProperty
+              value={component.props.text}
+              onChange={(text) => updateProps({ text })}
+            />
+          ) : null}
+
+          {component.type === COMPONENT_TYPES.INPUT ? (
+            <InputPropertyGroup component={component} onChange={updateProps} />
+          ) : null}
+
+          {component.type === COMPONENT_TYPES.IMAGE ? (
+            <ImagePropertyGroup component={component} onChange={updateProps} />
+          ) : null}
+        </>
       ) : null}
 
-      {component.type === COMPONENT_TYPES.INPUT ? (
-        <InputPropertyGroup component={component} onChange={updateProps} />
+      {showAdjust ? (
+        <>
+          <PositionPropertyGroup
+            x={component.x}
+            y={component.y}
+            onChange={updateComponent}
+          />
+          <SizePropertyGroup
+            width={component.width}
+            height={component.height}
+            onChange={updateComponent}
+          />
+        </>
       ) : null}
 
-      {component.type === COMPONENT_TYPES.IMAGE ? (
-        <ImagePropertyGroup component={component} onChange={updateProps} />
-      ) : null}
-
-      <PositionPropertyGroup
-        x={component.x}
-        y={component.y}
-        onChange={updateComponent}
-      />
-      <SizePropertyGroup
-        width={component.width}
-        height={component.height}
-        onChange={updateComponent}
-      />
-      {component.style.background && component.style.borderRadius != null ? (
+      {showStyle && hasBackgroundControl ? (
         <>
           <ColorPropertyGroup
             backgroundColor={getSolidBackgroundColor(component.style)}
@@ -104,15 +127,27 @@ export function InspectorPanel({
         </>
       ) : null}
 
-      <AnimationEditor
-        component={component}
-        isStatePreviewActive={
-          animationPreview?.activeStateIds.includes(component.id) ?? false
-        }
-        onChange={updateInteractions}
-        onPlayEnterPreview={onPlayEnterPreview}
-        onToggleStatePreview={onToggleStatePreview}
-      />
+      {showStyle && !hasBackgroundControl ? (
+        <ColorPropertyGroup
+          backgroundColor="#ffffff"
+          color={component.style.color}
+          showBackgroundColor={false}
+          showTextColor={component.style.color != null}
+          onChange={updateStyle}
+        />
+      ) : null}
+
+      {showAnimation ? (
+        <AnimationEditor
+          component={component}
+          isStatePreviewActive={
+            animationPreview?.activeStateIds.includes(component.id) ?? false
+          }
+          onChange={updateInteractions}
+          onPlayEnterPreview={onPlayEnterPreview}
+          onToggleStatePreview={onToggleStatePreview}
+        />
+      ) : null}
     </section>
   );
 }
