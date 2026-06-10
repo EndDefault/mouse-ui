@@ -30,7 +30,7 @@ export function DockingPanel({
   onResetPanel,
   onChangeComponent,
   onSetComponentLocked,
-  onRegisterSelectedAsStyleDefault,
+  onChangeStyleDefaultColor,
   onApplyStyleDefaultToSelected,
   onResetStyleDefaults,
   onPlayEnterPreview,
@@ -59,7 +59,7 @@ export function DockingPanel({
       onToggleDocking={toggleDocking}
       onChangeComponent={onChangeComponent}
       onSetComponentLocked={onSetComponentLocked}
-      onRegisterSelectedAsStyleDefault={onRegisterSelectedAsStyleDefault}
+      onChangeStyleDefaultColor={onChangeStyleDefaultColor}
       onApplyStyleDefaultToSelected={onApplyStyleDefaultToSelected}
       onResetStyleDefaults={onResetStyleDefaults}
       onPlayEnterPreview={onPlayEnterPreview}
@@ -119,7 +119,7 @@ function PanelShell({
   onToggleDocking,
   onChangeComponent,
   onSetComponentLocked,
-  onRegisterSelectedAsStyleDefault,
+  onChangeStyleDefaultColor,
   onApplyStyleDefaultToSelected,
   onResetStyleDefaults,
   onPlayEnterPreview,
@@ -176,7 +176,7 @@ function PanelShell({
           <StyleDefaultsPanel
             selectedComponent={component}
             styleDefaults={styleDefaults}
-            onRegisterSelected={onRegisterSelectedAsStyleDefault}
+            onChangeColor={onChangeStyleDefaultColor}
             onApplyToSelected={onApplyStyleDefaultToSelected}
             onReset={onResetStyleDefaults}
           />

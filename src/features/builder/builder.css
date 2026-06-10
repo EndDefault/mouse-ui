@@ -830,6 +830,23 @@
   gap: 8px;
 }
 
+.style-default-color {
+  display: grid;
+  gap: 6px;
+  color: #776f64;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.style-default-color input {
+  width: 100%;
+  height: 34px;
+  padding: 3px;
+  border: 1px solid #d8cfc3;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
 .style-default-actions button {
   min-height: 32px;
   border: 1px solid #d8cfc3;

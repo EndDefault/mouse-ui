@@ -82,17 +82,9 @@ function normalizeStyleDefaults(styleDefaults) {
   const defaults = createDefaultStyleDefaults();
   const source = readObject(styleDefaults);
 
-  return Object.fromEntries(
-    Object.entries(defaults).map(([type, defaultValue]) => [
-      type,
-      {
-        style: normalizeStyle(
-          { type, style: source[type]?.style ?? defaultValue.style },
-          type
-        )
-      }
-    ])
-  );
+  return {
+    color: readString(source.color, defaults.color)
+  };
 }
 
 function normalizeSelectedIds(selectedIds, components) {

@@ -1,55 +1,23 @@
 import { COMPONENT_TYPES } from "./componentTypes.js";
-import { DEFAULT_BORDER, DEFAULT_SHADOW } from "./styleValues.js";
+
+const DEFAULT_STYLE_COLOR = "#2f9e8f";
 
 export function createDefaultStyleDefaults() {
   return {
-    [COMPONENT_TYPES.BUTTON]: {
-      style: createVisualStyle({
-        background: createBackground("#2f9e8f"),
-        color: "#ffffff",
-        borderRadius: 8
-      })
-    },
-    [COMPONENT_TYPES.TEXT]: {
-      style: createVisualStyle({
-        color: "#24211f",
-        fontSize: 18,
-        borderRadius: 0
-      })
-    },
-    [COMPONENT_TYPES.INPUT]: {
-      style: createVisualStyle({
-        background: createBackground("#ffffff"),
-        color: "#24211f",
-        borderRadius: 8
-      })
-    },
-    [COMPONENT_TYPES.CONTAINER]: {
-      style: createVisualStyle({
-        background: createBackground("#ffffff"),
-        color: "#24211f",
-        borderRadius: 14
-      })
-    },
-    [COMPONENT_TYPES.DIV_BOX]: {
-      style: createVisualStyle({
-        background: createBackground("#f7c873"),
-        borderRadius: 16
-      })
-    }
+    color: DEFAULT_STYLE_COLOR
   };
 }
 
 export function mergeStyleDefault(component, styleDefaults) {
-  const defaultStyle = styleDefaults?.[component.type]?.style;
+  const color = styleDefaults?.color;
 
-  if (!defaultStyle) {
+  if (!color) {
     return component;
   }
 
   return {
     ...component,
-    style: mergeStyle(component.style, defaultStyle)
+    style: mergeStyle(component.style, getColorStylePatch(component.type, color))
   };
 }
 
@@ -98,11 +66,19 @@ function createBackground(color) {
   };
 }
 
-function createVisualStyle(style) {
+function getColorStylePatch(type, color) {
+  if (type === COMPONENT_TYPES.TEXT) {
+    return { color };
+  }
+
+  if (type === COMPONENT_TYPES.DIV_BOX || type === COMPONENT_TYPES.IMAGE) {
+    return {
+      background: createBackground(color)
+    };
+  }
+
   return {
-    ...style,
-    opacity: 1,
-    shadow: { ...DEFAULT_SHADOW },
-    border: { ...DEFAULT_BORDER }
+    background: createBackground(color),
+    color: type === COMPONENT_TYPES.BUTTON ? "#ffffff" : "#24211f"
   };
 }

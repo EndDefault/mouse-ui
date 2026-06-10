@@ -34,7 +34,7 @@ export function BuilderPage() {
     hasClipboard,
     deleteComponent,
     setComponentLocked,
-    registerSelectedAsStyleDefault,
+    changeStyleDefaultColor,
     applyStyleDefaultToSelected,
     resetStyleDefaults,
     changeCanvasSize,
@@ -142,7 +142,7 @@ export function BuilderPage() {
             onResetPanel={resetPanel}
             onChangeComponent={changeComponent}
             onSetComponentLocked={setComponentLocked}
-            onRegisterSelectedAsStyleDefault={registerSelectedAsStyleDefault}
+            onChangeStyleDefaultColor={changeStyleDefaultColor}
             onApplyStyleDefaultToSelected={applyStyleDefaultToSelected}
             onResetStyleDefaults={resetStyleDefaults}
             onPlayEnterPreview={playEnterPreview}

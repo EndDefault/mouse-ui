@@ -262,19 +262,13 @@ export function useBuilderState() {
     );
   }
 
-  function registerSelectedAsStyleDefault() {
-    if (!selectedComponent) {
-      return;
-    }
-
+  function changeStyleDefaultColor(color) {
     setProject((currentProject) =>
       touchProject({
         ...currentProject,
         styleDefaults: {
           ...currentProject.styleDefaults,
-          [selectedComponent.type]: {
-            style: cloneComponent(selectedComponent).style
-          }
+          color
         }
       })
     );
@@ -285,13 +279,15 @@ export function useBuilderState() {
       return;
     }
 
-    const defaultStyle = styleDefaults?.[selectedComponent.type]?.style;
+    const defaultColor = styleDefaults?.color;
 
-    if (!defaultStyle) {
+    if (!defaultColor) {
       return;
     }
 
-    changeComponent(selectedComponent.id, { style: defaultStyle });
+    changeComponent(selectedComponent.id, {
+      style: mergeStyleDefault(selectedComponent, styleDefaults).style
+    });
   }
 
   function resetStyleDefaults() {
@@ -321,7 +317,7 @@ export function useBuilderState() {
     moveComponents,
     deleteComponent,
     setComponentLocked,
-    registerSelectedAsStyleDefault,
+    changeStyleDefaultColor,
     applyStyleDefaultToSelected,
     resetStyleDefaults,
     copyComponents,
