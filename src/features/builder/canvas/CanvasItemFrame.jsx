@@ -18,6 +18,7 @@ const RESIZE_HANDLE_STYLES = {
   bottomLeft: { width: 10, height: 10, bottom: -5, left: -5 },
   topLeft: { width: 10, height: 10, top: -5, left: -5 }
 };
+const NESTED_FRAME_CANCEL_SELECTOR = ".canvas-item-frame .canvas-item-frame";
 
 export function CanvasItemFrame({
   component,
@@ -127,6 +128,7 @@ export function CanvasItemFrame({
   return (
     <Rnd
       bounds="parent"
+      cancel={NESTED_FRAME_CANCEL_SELECTOR}
       className={className}
       minWidth={64}
       minHeight={32}
