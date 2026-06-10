@@ -26,9 +26,9 @@ export function BuilderPage() {
         <div className="builder-topbar">
           <div>
             <h1>mouse-ui</h1>
-            <span>v0.4.0</span>
+            <span>v0.5.0</span>
           </div>
-          <strong>컴포넌트 확장</strong>
+          <strong>저장과 복사</strong>
         </div>
       }
       toolbar={
