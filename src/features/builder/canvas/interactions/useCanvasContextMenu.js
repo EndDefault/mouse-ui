@@ -41,7 +41,7 @@ export function useCanvasContextMenu({ onAddComponent, onDeleteComponent }) {
     }
 
     onAddComponent(type, {
-      parentId: menu.componentId,
+      parentId: menu.componentId ?? null,
       x: Math.max(8, Math.round(menu.localX)),
       y: Math.max(8, Math.round(menu.localY))
     });
@@ -49,7 +49,7 @@ export function useCanvasContextMenu({ onAddComponent, onDeleteComponent }) {
   }
 
   function deleteComponentFromMenu() {
-    if (!menu) {
+    if (!menu?.componentId) {
       return;
     }
 

@@ -72,6 +72,26 @@ export function CanvasViewport({
     onSelectComponent(null);
   }
 
+  function handleViewportContextMenu(event) {
+    if (event.target !== event.currentTarget) {
+      return;
+    }
+
+    const rect = event.currentTarget.getBoundingClientRect();
+
+    event.preventDefault();
+    closeMenu();
+    onSelectComponent(null);
+    openMenu({
+      componentId: null,
+      canAddChildren: true,
+      clientX: event.clientX,
+      clientY: event.clientY,
+      localX: (event.clientX - rect.left) / canvas.viewport.zoom,
+      localY: (event.clientY - rect.top) / canvas.viewport.zoom
+    });
+  }
+
   return (
     <div
       ref={stageRef}
@@ -92,6 +112,7 @@ export function CanvasViewport({
             height: canvas.height
           }}
           onClick={handleViewportClick}
+          onContextMenu={handleViewportContextMenu}
           {...selectionHandlers}
         >
           {animationCss ? <style>{animationCss}</style> : null}

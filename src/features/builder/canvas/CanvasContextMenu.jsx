@@ -23,7 +23,7 @@ export function CanvasContextMenu({ menu, onAdd, onDelete, onClose }) {
       }}
       onClick={(event) => event.stopPropagation()}
     >
-      <strong>{menu.canAddChildren ? "컨테이너 요소" : "객체 메뉴"}</strong>
+      <strong>{menu.componentId ? "객체 메뉴" : "컴포넌트 추가"}</strong>
       {menu.canAddChildren
         ? MENU_ITEMS.map((item) => (
             <button
@@ -35,9 +35,11 @@ export function CanvasContextMenu({ menu, onAdd, onDelete, onClose }) {
             </button>
           ))
         : null}
-      <button className="is-danger" type="button" onClick={onDelete}>
-        삭제
-      </button>
+      {menu.componentId ? (
+        <button className="is-danger" type="button" onClick={onDelete}>
+          삭제
+        </button>
+      ) : null}
       <button type="button" onClick={onClose}>
         닫기
       </button>
