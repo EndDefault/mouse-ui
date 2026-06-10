@@ -108,7 +108,7 @@ export function BuilderPage() {
         <div className="builder-topbar">
           <div>
             <h1>mouse-ui</h1>
-            <span>v1.4.1</span>
+            <span>v1.4.2</span>
           </div>
           <div className="builder-topbar-controls">
             <CanvasSizeControl

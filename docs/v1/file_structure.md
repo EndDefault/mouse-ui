@@ -58,6 +58,7 @@ src/features/builder/
 
   panel/
     DockingPanel.jsx
+    GroupPanel.jsx
     LockedComponentsPanel.jsx
     StyleDefaultsPanel.jsx
 
@@ -106,5 +107,6 @@ src/features/builder/
 
 - 왼쪽 사이드바 없이 `AppLayout`의 toolbar 영역을 생략할 수 있다.
 - 잠금 컴포넌트 관리는 `panel/LockedComponentsPanel.jsx`에서 담당한다.
+- 그룹 프레임 정렬 관리는 `panel/GroupPanel.jsx`에서 담당한다.
 - 기준 스타일 관리는 `panel/StyleDefaultsPanel.jsx`에서 담당한다.
 - 기준 스타일 기본값과 병합 로직은 `model/styleDefaults.js`에서 관리한다.
