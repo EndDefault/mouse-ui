@@ -18,7 +18,13 @@ const ANIMATIONS = [
 
 const EASINGS = ["ease", "ease-in", "ease-out", "ease-in-out", "linear"];
 
-export function AnimationEditor({ component, onChange }) {
+export function AnimationEditor({
+  component,
+  isStatePreviewActive = false,
+  onChange,
+  onPlayEnterPreview,
+  onToggleStatePreview
+}) {
   const interaction = component.interactions[0] ?? createDefaultInteraction(component.id);
   const animation = interaction.animation;
   const isEnabled = component.interactions.length > 0;
@@ -123,6 +129,21 @@ export function AnimationEditor({ component, onChange }) {
             </PropertyRow>
           </div>
           <AnimationTargetFields animation={animation} onChange={changeTo} />
+          <div className="animation-preview-actions">
+            <button
+              type="button"
+              onClick={() => onPlayEnterPreview(component.id)}
+            >
+              진입 재생
+            </button>
+            <button
+              type="button"
+              aria-pressed={isStatePreviewActive}
+              onClick={() => onToggleStatePreview(component.id)}
+            >
+              {isStatePreviewActive ? "상태 끄기" : "상태 켜기"}
+            </button>
+          </div>
         </>
       ) : null}
     </section>

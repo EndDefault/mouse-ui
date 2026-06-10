@@ -2,6 +2,7 @@ import { useMemo } from "react";
 import { CanvasContextMenu } from "./CanvasContextMenu.jsx";
 import { CanvasEmptyState } from "./CanvasEmptyState.jsx";
 import { CanvasItemFrame } from "./CanvasItemFrame.jsx";
+import { renderAnimations } from "../codegen/renderAnimations.js";
 import { useCanvasContextMenu } from "./interactions/useCanvasContextMenu.js";
 import { useCanvasLassoSelection } from "./interactions/useCanvasLassoSelection.js";
 import { useCanvasPanZoom } from "./interactions/useCanvasPanZoom.js";
@@ -11,6 +12,7 @@ export function CanvasViewport({
   components,
   selectedId,
   selectedIds,
+  animationPreview,
   onAddComponent,
   onSelectComponent,
   onSelectComponents,
@@ -24,6 +26,7 @@ export function CanvasViewport({
     [components]
   );
   const topLevelComponents = childrenByParent.get(null) ?? [];
+  const animationCss = useMemo(() => renderAnimations(components), [components]);
   const {
     menu,
     openMenu,
@@ -91,6 +94,7 @@ export function CanvasViewport({
           onClick={handleViewportClick}
           {...selectionHandlers}
         >
+          {animationCss ? <style>{animationCss}</style> : null}
           {components.length === 0 ? <CanvasEmptyState /> : null}
           {topLevelComponents.map((component) => (
             <CanvasItemFrame
@@ -101,6 +105,7 @@ export function CanvasViewport({
               scale={canvas.viewport.zoom}
               selectedId={selectedId}
               selectedIds={selectedIds}
+              animationPreview={animationPreview}
               onOpenContextMenu={openMenu}
               onSelect={onSelectComponent}
               onChange={onChangeComponent}

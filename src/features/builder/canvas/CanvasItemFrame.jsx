@@ -1,5 +1,6 @@
 import { useRef } from "react";
 import { Rnd } from "react-rnd";
+import { getAnimationClassName } from "../codegen/renderAnimations.js";
 import { COMPONENT_TYPES } from "../model/componentTypes.js";
 import { ButtonCanvasItem } from "./renderers/ButtonCanvasItem.jsx";
 import { ContainerCanvasItem } from "./renderers/ContainerCanvasItem.jsx";
@@ -26,6 +27,7 @@ export function CanvasItemFrame({
   scale = 1,
   selectedId,
   selectedIds = [],
+  animationPreview,
   onOpenContextMenu,
   onSelect,
   onChange,
@@ -34,6 +36,20 @@ export function CanvasItemFrame({
   const dragPositionRef = useRef(null);
   const isContainer = component.type === COMPONENT_TYPES.CONTAINER;
   const childComponents = childrenByParent.get(component.id) ?? [];
+  const animationClassName = getAnimationClassName(component);
+  const isStatePreviewActive =
+    animationPreview?.activeStateIds.includes(component.id) ?? false;
+  const animationLayerClassName = [
+    "canvas-animation-layer",
+    animationClassName,
+    isStatePreviewActive ? "is-active" : ""
+  ]
+    .filter(Boolean)
+    .join(" ");
+  const animationLayerKey =
+    animationPreview?.enterPreviewId === component.id
+      ? `${component.id}-${animationPreview.enterPreviewKey}`
+      : component.id;
   const className = [
     "canvas-item-frame",
     isContainer ? "is-container" : "",
@@ -142,38 +158,41 @@ export function CanvasItemFrame({
       onDragStop={handleDragStop}
       onResizeStop={handleResizeStop}
     >
-      {component.type === COMPONENT_TYPES.BUTTON ? (
-        <ButtonCanvasItem component={component} />
-      ) : null}
-      {component.type === COMPONENT_TYPES.TEXT ? (
-        <TextCanvasItem component={component} />
-      ) : null}
-      {component.type === COMPONENT_TYPES.INPUT ? (
-        <InputCanvasItem component={component} />
-      ) : null}
-      {component.type === COMPONENT_TYPES.CONTAINER ? (
-        <>
-          <ContainerCanvasItem component={component} />
-          {childComponents.map((childComponent) => (
-            <CanvasItemFrame
-              key={childComponent.id}
-              component={childComponent}
-              childrenByParent={childrenByParent}
-              isSelected={selectedIds.includes(childComponent.id)}
-              scale={scale}
-              selectedId={selectedId}
-              selectedIds={selectedIds}
-              onOpenContextMenu={onOpenContextMenu}
-              onSelect={onSelect}
-              onChange={onChange}
-              onMoveComponents={onMoveComponents}
-            />
-          ))}
-        </>
-      ) : null}
-      {component.type === COMPONENT_TYPES.IMAGE ? (
-        <ImageCanvasItem component={component} />
-      ) : null}
+      <div key={animationLayerKey} className={animationLayerClassName}>
+        {component.type === COMPONENT_TYPES.BUTTON ? (
+          <ButtonCanvasItem component={component} />
+        ) : null}
+        {component.type === COMPONENT_TYPES.TEXT ? (
+          <TextCanvasItem component={component} />
+        ) : null}
+        {component.type === COMPONENT_TYPES.INPUT ? (
+          <InputCanvasItem component={component} />
+        ) : null}
+        {component.type === COMPONENT_TYPES.CONTAINER ? (
+          <>
+            <ContainerCanvasItem component={component} />
+            {childComponents.map((childComponent) => (
+              <CanvasItemFrame
+                key={childComponent.id}
+                component={childComponent}
+                childrenByParent={childrenByParent}
+                isSelected={selectedIds.includes(childComponent.id)}
+                scale={scale}
+                selectedId={selectedId}
+                selectedIds={selectedIds}
+                animationPreview={animationPreview}
+                onOpenContextMenu={onOpenContextMenu}
+                onSelect={onSelect}
+                onChange={onChange}
+                onMoveComponents={onMoveComponents}
+              />
+            ))}
+          </>
+        ) : null}
+        {component.type === COMPONENT_TYPES.IMAGE ? (
+          <ImageCanvasItem component={component} />
+        ) : null}
+      </div>
     </Rnd>
   );
 }

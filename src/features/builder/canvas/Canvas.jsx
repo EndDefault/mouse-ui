@@ -5,6 +5,7 @@ export function Canvas({
   components,
   selectedId,
   selectedIds,
+  animationPreview,
   onAddComponent,
   onSelectComponent,
   onSelectComponents,
@@ -28,6 +29,7 @@ export function Canvas({
           components={components}
           selectedId={selectedId}
           selectedIds={selectedIds}
+          animationPreview={animationPreview}
           onAddComponent={onAddComponent}
           onSelectComponent={onSelectComponent}
           onSelectComponents={onSelectComponents}

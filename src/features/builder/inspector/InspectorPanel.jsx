@@ -12,7 +12,13 @@ import { SizePropertyGroup } from "./fields/SizePropertyGroup.jsx";
 import { TextProperty } from "./fields/TextProperty.jsx";
 import "./inspector.css";
 
-export function InspectorPanel({ component, onChangeComponent }) {
+export function InspectorPanel({
+  component,
+  animationPreview,
+  onChangeComponent,
+  onPlayEnterPreview,
+  onToggleStatePreview
+}) {
   if (!component) {
     return <EmptyInspector />;
   }
@@ -100,7 +106,12 @@ export function InspectorPanel({ component, onChangeComponent }) {
 
       <AnimationEditor
         component={component}
+        isStatePreviewActive={
+          animationPreview?.activeStateIds.includes(component.id) ?? false
+        }
         onChange={updateInteractions}
+        onPlayEnterPreview={onPlayEnterPreview}
+        onToggleStatePreview={onToggleStatePreview}
       />
     </section>
   );
