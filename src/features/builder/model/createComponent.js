@@ -5,7 +5,75 @@ export function createComponent(type, order) {
     return createButtonComponent(order);
   }
 
+  if (type === COMPONENT_TYPES.TEXT) {
+    return createTextComponent(order);
+  }
+
+  if (type === COMPONENT_TYPES.INPUT) {
+    return createInputComponent(order);
+  }
+
+  if (type === COMPONENT_TYPES.BOX) {
+    return createBoxComponent(order);
+  }
+
   throw new Error(`Unsupported component type: ${type}`);
+}
+
+function createBoxComponent(order) {
+  const offset = (order - 1) * 16;
+
+  return {
+    id: `box-${order}`,
+    type: COMPONENT_TYPES.BOX,
+    x: 144 + offset,
+    y: 136 + offset,
+    width: 180,
+    height: 100,
+    style: {
+      backgroundColor: "#f0b35a",
+      borderRadius: 12
+    }
+  };
+}
+
+function createInputComponent(order) {
+  const offset = (order - 1) * 16;
+
+  return {
+    id: `input-${order}`,
+    type: COMPONENT_TYPES.INPUT,
+    label: "이메일",
+    placeholder: "이메일을 입력하세요",
+    inputType: "email",
+    x: 128 + offset,
+    y: 120 + offset,
+    width: 240,
+    height: 68,
+    style: {
+      backgroundColor: "#ffffff",
+      color: "#24211f",
+      borderRadius: 8
+    }
+  };
+}
+
+function createTextComponent(order) {
+  const offset = (order - 1) * 16;
+
+  return {
+    id: `text-${order}`,
+    type: COMPONENT_TYPES.TEXT,
+    text: "텍스트",
+    x: 112 + offset,
+    y: 104 + offset,
+    width: 180,
+    height: 40,
+    style: {
+      color: "#24211f",
+      fontSize: 18
+    }
+  };
 }
 
 function createButtonComponent(order) {

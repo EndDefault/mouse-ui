@@ -1,26 +1,50 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { createComponent } from "../model/createComponent.js";
 import { updateComponent } from "../model/updateComponent.js";
+import {
+  loadBuilderProject,
+  saveBuilderProject
+} from "../storage/builderStorage.js";
+import { normalizeProject } from "../storage/projectSerializer.js";
 
 export function useBuilderState() {
-  const [components, setComponents] = useState([]);
-  const [selectedId, setSelectedId] = useState(null);
+  const [project, setProject] = useState(() => loadBuilderProject());
+  const { components, selectedId } = project;
+
+  useEffect(() => {
+    saveBuilderProject(project);
+  }, [project]);
 
   function addComponent(type) {
-    const component = createComponent(type, components.length + 1);
+    setProject((currentProject) => {
+      const component = createComponent(
+        type,
+        currentProject.components.length + 1
+      );
 
-    setComponents([...components, component]);
-    setSelectedId(component.id);
+      return {
+        components: [...currentProject.components, component],
+        selectedId: component.id
+      };
+    });
   }
 
   function selectComponent(id) {
-    setSelectedId(id);
+    setProject((currentProject) => ({
+      ...currentProject,
+      selectedId: id
+    }));
   }
 
   function changeComponent(id, patch) {
-    setComponents((currentComponents) => {
-      return updateComponent(currentComponents, id, patch);
-    });
+    setProject((currentProject) => ({
+      ...currentProject,
+      components: updateComponent(currentProject.components, id, patch)
+    }));
+  }
+
+  function importProject(nextProject) {
+    setProject(normalizeProject(nextProject));
   }
 
   return {
@@ -28,6 +52,7 @@ export function useBuilderState() {
     selectedId,
     addComponent,
     selectComponent,
-    changeComponent
+    changeComponent,
+    importProject
   };
 }
