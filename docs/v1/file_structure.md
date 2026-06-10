@@ -51,12 +51,15 @@ src/features/builder/
   model/
     componentTypes.js
     createComponent.js
+    styleDefaults.js
     styleValues.js
     updateComponent.js
     canvasPresets.js
 
   panel/
     DockingPanel.jsx
+    LockedComponentsPanel.jsx
+    StyleDefaultsPanel.jsx
 
   state/
     useBuilderState.js
@@ -98,3 +101,10 @@ src/features/builder/
 
 - 꾸미기용 `divBox`는 새 컴포넌트 타입으로 관리하되, 컨테이너처럼 자식 요소를 담는 역할은 하지 않는다.
 - 숫자 입력 중간 상태는 `inspector/fields/NumberInput.jsx`에서 관리한다.
+
+## v1.4 관련 기준
+
+- 왼쪽 사이드바 없이 `AppLayout`의 toolbar 영역을 생략할 수 있다.
+- 잠금 컴포넌트 관리는 `panel/LockedComponentsPanel.jsx`에서 담당한다.
+- 기준 스타일 관리는 `panel/StyleDefaultsPanel.jsx`에서 담당한다.
+- 기준 스타일 기본값과 병합 로직은 `model/styleDefaults.js`에서 관리한다.
