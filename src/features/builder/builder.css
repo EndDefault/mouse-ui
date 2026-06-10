@@ -243,12 +243,43 @@
   align-items: center;
   justify-content: space-between;
   min-width: 0;
+  gap: 12px;
 }
 
-.builder-code-header span {
+.builder-code-actions {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 8px;
+}
+
+.builder-code-actions span {
   color: #776f64;
   font-size: 13px;
   font-weight: 700;
+}
+
+.copy-code-button {
+  min-width: 58px;
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid #d8cfc3;
+  border-radius: 8px;
+  color: #2f2a25;
+  background: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.copy-code-button:hover:not(:disabled) {
+  border-color: #2f9e8f;
+  background: #eef8f5;
+}
+
+.copy-code-button:disabled {
+  color: #aaa196;
+  cursor: not-allowed;
 }
 
 .code-block {
