@@ -1,4 +1,5 @@
 import { COMPONENT_TYPES } from "./componentTypes.js";
+import { DEFAULT_BORDER, DEFAULT_SHADOW } from "./styleValues.js";
 
 export function createComponent(type, order, options = {}) {
   if (type === COMPONENT_TYPES.BUTTON) {
@@ -50,7 +51,7 @@ function createInputComponent(order) {
       placeholder: "이메일을 입력하세요",
       inputType: "email"
     },
-    style: {
+    style: createElementStyle({
       background: {
         type: "solid",
         color: "#ffffff",
@@ -58,7 +59,7 @@ function createInputComponent(order) {
       },
       color: "#24211f",
       borderRadius: 8
-    },
+    }),
     interactions: []
   };
 }
@@ -78,10 +79,11 @@ function createTextComponent(order) {
     props: {
       text: "텍스트"
     },
-    style: {
+    style: createElementStyle({
       color: "#24211f",
-      fontSize: 18
-    },
+      fontSize: 18,
+      borderRadius: 0
+    }),
     interactions: []
   };
 }
@@ -101,7 +103,7 @@ function createButtonComponent(order) {
     props: {
       text: "버튼"
     },
-    style: {
+    style: createElementStyle({
       background: {
         type: "solid",
         color: "#2f9e8f",
@@ -109,7 +111,7 @@ function createButtonComponent(order) {
       },
       color: "#ffffff",
       borderRadius: 8
-    },
+    }),
     interactions: []
   };
 }
@@ -127,7 +129,7 @@ function createContainerComponent(order) {
     width: 320,
     height: 220,
     props: {},
-    style: {
+    style: createElementStyle({
       background: {
         type: "solid",
         color: "#ffffff",
@@ -135,7 +137,7 @@ function createContainerComponent(order) {
       },
       color: "#24211f",
       borderRadius: 14
-    },
+    }),
     interactions: []
   };
 }
@@ -156,14 +158,23 @@ function createImageComponent(order) {
       src: "",
       alt: "이미지"
     },
-    style: {
+    style: createElementStyle({
       background: {
         type: "solid",
         color: "#e8f2ef",
         gradient: null
       },
       borderRadius: 10
-    },
+    }),
     interactions: []
+  };
+}
+
+function createElementStyle(style) {
+  return {
+    ...style,
+    opacity: 1,
+    shadow: { ...DEFAULT_SHADOW },
+    border: { ...DEFAULT_BORDER }
   };
 }

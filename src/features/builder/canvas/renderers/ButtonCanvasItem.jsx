@@ -1,10 +1,14 @@
-import { getBackgroundCss } from "../../model/styleValues.js";
+import {
+  getBackgroundCss,
+  getCanvasVisualStyle
+} from "../../model/styleValues.js";
 
 export function ButtonCanvasItem({ component }) {
   return (
     <button
       className="canvas-button-item"
       style={{
+        ...getCanvasVisualStyle(component.style),
         "--button-bg": getBackgroundCss(component.style),
         "--button-color": component.style.color,
         borderRadius: component.style.borderRadius

@@ -1,5 +1,10 @@
 import { COMPONENT_TYPES } from "../model/componentTypes.js";
-import { getBackgroundCss } from "../model/styleValues.js";
+import {
+  getBackgroundCss,
+  getBorderCss,
+  getShadowCss,
+  getVisualStyleDeclarations
+} from "../model/styleValues.js";
 import { escapeHtml } from "./escapeHtml.js";
 import { getAnimationClassName } from "./renderAnimations.js";
 
@@ -61,8 +66,9 @@ function generateImageHtml(component, depth) {
 function generateInputHtml(component, depth) {
   const wrapperStyle = buildBaseStyle(component, [
     `color:${component.style.color}`,
+    `opacity:${component.style.opacity ?? 1}`,
     "font:700 12px system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-  ]);
+  ], { includeVisual: false });
   const inputStyle = [
     "display:block",
     "width:100%",
@@ -70,8 +76,9 @@ function generateInputHtml(component, depth) {
     "margin-top:6px",
     "padding:0 12px",
     `border-radius:${component.style.borderRadius}px`,
-    "border:1px solid #d8cfc3",
+    `border:${getBorderCss(component.style)}`,
     `background:${getBackgroundCss(component.style)}`,
+    `box-shadow:${getShadowCss(component.style)}`,
     `color:${component.style.color}`,
     "font:600 14px system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
   ].join("; ");
@@ -90,6 +97,7 @@ function generateTextHtml(component, depth) {
     "margin:0",
     `color:${component.style.color}`,
     `font-size:${component.style.fontSize}px`,
+    `border-radius:${component.style.borderRadius ?? 0}px`,
     "font-weight:700",
     "display:flex",
     "align-items:center"
@@ -111,14 +119,20 @@ function generateButtonHtml(component, depth) {
   return `${getIndent(depth)}<button ${renderAttributes(component, style)}>\n${getIndent(depth + 1)}${escapeHtml(component.props.text)}\n${getIndent(depth)}</button>`;
 }
 
-function buildBaseStyle(component, declarations = []) {
+function buildBaseStyle(component, declarations = [], options = {}) {
+  const visualDeclarations =
+    options.includeVisual === false
+      ? []
+      : getVisualStyleDeclarations(component.style);
+
   return [
     "position:absolute",
     `left:${component.x}px`,
     `top:${component.y}px`,
     `width:${component.width}px`,
     `height:${component.height}px`,
-    ...declarations
+    ...declarations,
+    ...visualDeclarations
   ].join("; ");
 }
 

@@ -3,12 +3,15 @@ import { COMPONENT_TYPES } from "../model/componentTypes.js";
 import { getSolidBackgroundColor } from "../model/styleValues.js";
 import { AnimationEditor } from "./AnimationEditor.jsx";
 import { EmptyInspector } from "./EmptyInspector.jsx";
+import { BorderPropertyGroup } from "./fields/BorderPropertyGroup.jsx";
 import { ColorPropertyGroup } from "./fields/ColorPropertyGroup.jsx";
 import { GradientEditor } from "./GradientEditor.jsx";
 import { ImagePropertyGroup } from "./fields/ImagePropertyGroup.jsx";
 import { InputPropertyGroup } from "./fields/InputPropertyGroup.jsx";
+import { OpacityProperty } from "./fields/OpacityProperty.jsx";
 import { PositionPropertyGroup } from "./fields/PositionPropertyGroup.jsx";
 import { RadiusProperty } from "./fields/RadiusProperty.jsx";
+import { ShadowPropertyGroup } from "./fields/ShadowPropertyGroup.jsx";
 import { SizePropertyGroup } from "./fields/SizePropertyGroup.jsx";
 import { TextProperty } from "./fields/TextProperty.jsx";
 import "./inspector.css";
@@ -34,8 +37,9 @@ export function InspectorPanel({
     component.type === COMPONENT_TYPES.TEXT ||
     component.type === COMPONENT_TYPES.INPUT ||
     component.type === COMPONENT_TYPES.IMAGE;
-  const hasBackgroundControl =
-    component.style.background && component.style.borderRadius != null;
+  const hasBackgroundControl = Boolean(component.style.background);
+  const hasRadiusControl = component.style.borderRadius != null;
+  const hasTextColorControl = component.style.color != null;
 
   function updateComponent(patch) {
     onChangeComponent(component.id, patch);
@@ -108,33 +112,42 @@ export function InspectorPanel({
         </>
       ) : null}
 
-      {showStyle && hasBackgroundControl ? (
+      {showStyle ? (
         <>
-          <ColorPropertyGroup
-            backgroundColor={getSolidBackgroundColor(component.style)}
-            color={component.style.color}
-            showTextColor={component.style.color != null}
+          {hasBackgroundControl || hasTextColorControl ? (
+            <ColorPropertyGroup
+              backgroundColor={getSolidBackgroundColor(component.style)}
+              color={component.style.color}
+              showBackgroundColor={hasBackgroundControl}
+              showTextColor={hasTextColorControl}
+              onChange={updateStyle}
+            />
+          ) : null}
+          {hasBackgroundControl ? (
+            <GradientEditor
+              background={component.style.background}
+              onChange={updateStyle}
+            />
+          ) : null}
+          {hasRadiusControl ? (
+            <RadiusProperty
+              value={component.style.borderRadius}
+              onChange={(borderRadius) => updateStyle({ borderRadius })}
+            />
+          ) : null}
+          <OpacityProperty
+            value={component.style.opacity}
+            onChange={(opacity) => updateStyle({ opacity })}
+          />
+          <ShadowPropertyGroup
+            shadow={component.style.shadow}
             onChange={updateStyle}
           />
-          <GradientEditor
-            background={component.style.background}
+          <BorderPropertyGroup
+            border={component.style.border}
             onChange={updateStyle}
-          />
-          <RadiusProperty
-            value={component.style.borderRadius}
-            onChange={(borderRadius) => updateStyle({ borderRadius })}
           />
         </>
-      ) : null}
-
-      {showStyle && !hasBackgroundControl ? (
-        <ColorPropertyGroup
-          backgroundColor="#ffffff"
-          color={component.style.color}
-          showBackgroundColor={false}
-          showTextColor={component.style.color != null}
-          onChange={updateStyle}
-        />
       ) : null}
 
       {showAnimation ? (

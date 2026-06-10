@@ -6,6 +6,7 @@ import {
   COMPONENT_TYPES,
   LEGACY_COMPONENT_TYPES
 } from "../model/componentTypes.js";
+import { DEFAULT_BORDER, DEFAULT_SHADOW } from "../model/styleValues.js";
 
 const SCHEMA_VERSION = 1;
 const SUPPORTED_TYPES = new Set([
@@ -183,35 +184,36 @@ function normalizeStyle(component, type) {
   const style = readObject(component.style);
 
   if (type === COMPONENT_TYPES.TEXT) {
-    return {
+    return withVisualStyle(style, {
       color: readString(style.color, "#24211f"),
-      fontSize: readNumber(style.fontSize, 18, 8)
-    };
+      fontSize: readNumber(style.fontSize, 18, 8),
+      borderRadius: readNumber(style.borderRadius, 0)
+    });
   }
 
   if (component.type === LEGACY_COMPONENT_TYPES.BOX) {
-    return {
+    return withVisualStyle(style, {
       background: normalizeBackground(style, "#f0b35a"),
       borderRadius: readNumber(style.borderRadius, 12)
-    };
+    });
   }
 
   if (type === COMPONENT_TYPES.CONTAINER) {
-    return {
+    return withVisualStyle(style, {
       background: normalizeBackground(style, "#ffffff"),
       color: readString(style.color, "#24211f"),
       borderRadius: readNumber(style.borderRadius, 14)
-    };
+    });
   }
 
   if (type === COMPONENT_TYPES.IMAGE) {
-    return {
+    return withVisualStyle(style, {
       background: normalizeBackground(style, "#e8f2ef"),
       borderRadius: readNumber(style.borderRadius, 10)
-    };
+    });
   }
 
-  return {
+  return withVisualStyle(style, {
     background: normalizeBackground(
       style,
       type === COMPONENT_TYPES.INPUT ? "#ffffff" : "#2f9e8f"
@@ -221,7 +223,7 @@ function normalizeStyle(component, type) {
       type === COMPONENT_TYPES.INPUT ? "#24211f" : "#ffffff"
     ),
     borderRadius: readNumber(style.borderRadius, 8)
-  };
+  });
 }
 
 function normalizeBackground(style, fallbackColor) {
@@ -242,9 +244,55 @@ function normalizeGradient(gradient) {
   }
 
   return {
+    kind: readString(gradient.kind, "linear"),
     direction: readString(gradient.direction, "to right"),
     from: readString(gradient.from, "#2563eb"),
-    to: readString(gradient.to, "#14b8a6")
+    to: readString(gradient.to, "#14b8a6"),
+    fromPosition: readNumber(gradient.fromPosition, 0, 0, 100),
+    toPosition: readNumber(gradient.toPosition, 100, 0, 100)
+  };
+}
+
+function withVisualStyle(sourceStyle, style) {
+  return {
+    ...style,
+    opacity: readNumber(sourceStyle.opacity, 1, 0, 1),
+    shadow: normalizeShadow(sourceStyle.shadow),
+    border: normalizeBorder(sourceStyle.border)
+  };
+}
+
+function normalizeShadow(shadowValue) {
+  const shadow = readObject(shadowValue);
+
+  return {
+    enabled:
+      typeof shadow.enabled === "boolean"
+        ? shadow.enabled
+        : DEFAULT_SHADOW.enabled,
+    x: readNumber(shadow.x, DEFAULT_SHADOW.x, -100, 100),
+    y: readNumber(shadow.y, DEFAULT_SHADOW.y, -100, 100),
+    blur: readNumber(shadow.blur, DEFAULT_SHADOW.blur, 0, 160),
+    spread: readNumber(shadow.spread, DEFAULT_SHADOW.spread, -100, 100),
+    color: readString(shadow.color, DEFAULT_SHADOW.color),
+    opacity: readNumber(shadow.opacity, DEFAULT_SHADOW.opacity, 0, 1)
+  };
+}
+
+function normalizeBorder(borderValue) {
+  const border = readObject(borderValue);
+  const style = readString(border.style, DEFAULT_BORDER.style);
+
+  return {
+    enabled:
+      typeof border.enabled === "boolean"
+        ? border.enabled
+        : DEFAULT_BORDER.enabled,
+    color: readString(border.color, DEFAULT_BORDER.color),
+    width: readNumber(border.width, DEFAULT_BORDER.width, 0, 24),
+    style: ["solid", "dashed", "dotted"].includes(style)
+      ? style
+      : DEFAULT_BORDER.style
   };
 }
 

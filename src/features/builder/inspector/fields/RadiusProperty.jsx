@@ -4,7 +4,7 @@ import { readNumberInput } from "./readNumberInput.js";
 export function RadiusProperty({ value, onChange }) {
   return (
     <section className="property-group">
-      <h3>모양</h3>
+      <h3>모서리</h3>
       <PropertyRow label="둥글기">
         <input
           min="0"

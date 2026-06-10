@@ -33,5 +33,19 @@ function mergeStyle(currentStyle = {}, patchStyle = {}) {
     };
   }
 
+  if (patchStyle.shadow) {
+    nextStyle.shadow = {
+      ...currentStyle.shadow,
+      ...patchStyle.shadow
+    };
+  }
+
+  if (patchStyle.border) {
+    nextStyle.border = {
+      ...currentStyle.border,
+      ...patchStyle.border
+    };
+  }
+
   return nextStyle;
 }

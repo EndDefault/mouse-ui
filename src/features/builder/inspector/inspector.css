@@ -100,10 +100,37 @@
   padding: 3px;
 }
 
+.property-row input[type="range"] {
+  padding: 0;
+  border: 0;
+  background: transparent;
+}
+
 .property-row input:focus,
 .property-row select:focus {
   border-color: #2f9e8f;
   outline: 3px solid rgba(47, 158, 143, 0.18);
+}
+
+.property-toggle {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+  gap: 8px;
+  color: #514b44;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.property-toggle input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+}
+
+.gradient-position-row {
+  display: grid;
+  gap: 8px;
 }
 
 .empty-inspector {

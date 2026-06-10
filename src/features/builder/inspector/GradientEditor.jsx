@@ -1,4 +1,5 @@
 import { PropertyRow } from "./fields/PropertyRow.jsx";
+import { readNumberInput } from "./fields/readNumberInput.js";
 
 const DIRECTIONS = [
   { value: "to right", label: "오른쪽" },
@@ -9,10 +10,14 @@ const DIRECTIONS = [
 ];
 
 export function GradientEditor({ background, onChange }) {
-  const gradient = background.gradient ?? {
+  const gradient = {
+    kind: "linear",
     direction: "to right",
-    from: background.color,
-    to: "#14b8a6"
+    from: background.color ?? "#2563eb",
+    to: "#14b8a6",
+    fromPosition: 0,
+    toPosition: 100,
+    ...(background.gradient ?? {})
   };
 
   function changeMode(type) {
@@ -63,20 +68,32 @@ export function GradientEditor({ background, onChange }) {
       </PropertyRow>
       {background.type === "gradient" ? (
         <>
-          <PropertyRow label="방향">
-            <select
-              value={gradient.direction}
-              onChange={(event) =>
-                changeGradient({ direction: event.target.value })
-              }
-            >
-              {DIRECTIONS.map((direction) => (
-                <option key={direction.value} value={direction.value}>
-                  {direction.label}
-                </option>
-              ))}
-            </select>
-          </PropertyRow>
+          <div className="property-grid">
+            <PropertyRow label="종류">
+              <select
+                value={gradient.kind}
+                onChange={(event) =>
+                  changeGradient({ kind: event.target.value })
+                }
+              >
+                <option value="linear">선형</option>
+              </select>
+            </PropertyRow>
+            <PropertyRow label="방향">
+              <select
+                value={gradient.direction}
+                onChange={(event) =>
+                  changeGradient({ direction: event.target.value })
+                }
+              >
+                {DIRECTIONS.map((direction) => (
+                  <option key={direction.value} value={direction.value}>
+                    {direction.label}
+                  </option>
+                ))}
+              </select>
+            </PropertyRow>
+          </div>
           <div className="gradient-color-row">
             <PropertyRow label="시작">
               <input
@@ -92,6 +109,40 @@ export function GradientEditor({ background, onChange }) {
                 type="color"
                 value={gradient.to}
                 onChange={(event) => changeGradient({ to: event.target.value })}
+              />
+            </PropertyRow>
+          </div>
+          <div className="gradient-position-row">
+            <PropertyRow label={`시작 위치 ${gradient.fromPosition}%`}>
+              <input
+                min="0"
+                max="100"
+                type="range"
+                value={gradient.fromPosition}
+                onChange={(event) =>
+                  changeGradient({
+                    fromPosition: Math.min(
+                      gradient.toPosition,
+                      readNumberInput(event, gradient.fromPosition, 0)
+                    )
+                  })
+                }
+              />
+            </PropertyRow>
+            <PropertyRow label={`끝 위치 ${gradient.toPosition}%`}>
+              <input
+                min="0"
+                max="100"
+                type="range"
+                value={gradient.toPosition}
+                onChange={(event) =>
+                  changeGradient({
+                    toPosition: Math.max(
+                      gradient.fromPosition,
+                      readNumberInput(event, gradient.toPosition, 0)
+                    )
+                  })
+                }
               />
             </PropertyRow>
           </div>
