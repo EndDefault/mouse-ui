@@ -167,13 +167,37 @@
 
 .canvas-stage {
   min-height: 0;
-  overflow: auto;
+  overflow: hidden;
+}
+
+.canvas-pan-shell {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border: 1px solid #d9d2c7;
+  border-radius: 8px;
+  background: #dcd7cf;
+}
+
+.canvas-pan-shell.is-space-ready {
+  cursor: grab;
+}
+
+.canvas-pan-shell.is-panning {
+  cursor: grabbing;
+}
+
+.canvas-viewport-transform {
+  position: absolute;
+  top: 0;
+  left: 0;
+  transform-origin: 0 0;
+  will-change: transform;
 }
 
 .canvas-viewport {
   position: relative;
-  width: 720px;
-  height: 480px;
   border: 1px solid #cfc6ba;
   border-radius: 8px;
   background:

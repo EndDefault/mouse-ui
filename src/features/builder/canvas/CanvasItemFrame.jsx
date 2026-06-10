@@ -16,7 +16,13 @@ const RESIZE_HANDLE_STYLES = {
   topLeft: { width: 10, height: 10, top: -5, left: -5 }
 };
 
-export function CanvasItemFrame({ component, isSelected, onSelect, onChange }) {
+export function CanvasItemFrame({
+  component,
+  isSelected,
+  scale = 1,
+  onSelect,
+  onChange
+}) {
   const className = isSelected
     ? "canvas-item-frame is-selected"
     : "canvas-item-frame";
@@ -50,6 +56,7 @@ export function CanvasItemFrame({ component, isSelected, onSelect, onChange }) {
       minHeight={32}
       position={{ x: component.x, y: component.y }}
       resizeHandleStyles={isSelected ? RESIZE_HANDLE_STYLES : undefined}
+      scale={scale}
       size={{ width: component.width, height: component.height }}
       onClick={handleClick}
       onDragStop={handleDragStop}

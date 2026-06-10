@@ -13,7 +13,8 @@ export function Canvas({
       <div className="builder-canvas-header">
         <h2>캔버스</h2>
         <span>
-          {canvas.width} x {canvas.height} / {components.length}개 요소
+          {canvas.width} x {canvas.height} /{" "}
+          {Math.round(canvas.viewport.zoom * 100)}% / {components.length}개 요소
         </span>
       </div>
       <div className="canvas-stage">
