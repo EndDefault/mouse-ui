@@ -61,7 +61,7 @@ export function useCanvasLassoSelection({
     if (
       event.button !== 0 ||
       isSpacePressed ||
-      event.target !== event.currentTarget
+      !canStartSelectionDrag(event)
     ) {
       return;
     }
@@ -94,6 +94,20 @@ export function useCanvasLassoSelection({
     },
     shouldSuppressSelectionClick
   };
+}
+
+function canStartSelectionDrag(event) {
+  if (event.target === event.currentTarget) {
+    return true;
+  }
+
+  const itemFrame = event.target.closest?.(".canvas-item-frame");
+
+  if (!itemFrame || !event.currentTarget.contains(itemFrame)) {
+    return false;
+  }
+
+  return itemFrame.classList.contains("is-locked");
 }
 
 function toCanvasPoint(event, stageRef, viewport) {
