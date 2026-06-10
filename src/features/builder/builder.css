@@ -397,6 +397,16 @@
   background: #eef8f5;
 }
 
+.gradient-editor select {
+  width: 100%;
+}
+
+.gradient-color-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px;
+}
+
 .builder-code-panel {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
