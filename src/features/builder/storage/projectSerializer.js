@@ -6,6 +6,7 @@ import {
   COMPONENT_TYPES,
   LEGACY_COMPONENT_TYPES
 } from "../model/componentTypes.js";
+import { createDefaultStyleDefaults } from "../model/styleDefaults.js";
 import { DEFAULT_BORDER, DEFAULT_SHADOW } from "../model/styleValues.js";
 
 const SCHEMA_VERSION = 1;
@@ -37,6 +38,7 @@ export function createEmptyProject() {
     components: [],
     selectedId: null,
     selectedIds: [],
+    styleDefaults: createDefaultStyleDefaults(),
     metadata: {
       createdAt: now,
       updatedAt: now
@@ -71,8 +73,26 @@ export function normalizeProject(project) {
     components,
     selectedId: selectedIds[0] ?? selectedId,
     selectedIds: selectedIds.length ? selectedIds : selectedId ? [selectedId] : [],
+    styleDefaults: normalizeStyleDefaults(project?.styleDefaults),
     metadata: normalizeMetadata(project?.metadata, emptyProject.metadata)
   };
+}
+
+function normalizeStyleDefaults(styleDefaults) {
+  const defaults = createDefaultStyleDefaults();
+  const source = readObject(styleDefaults);
+
+  return Object.fromEntries(
+    Object.entries(defaults).map(([type, defaultValue]) => [
+      type,
+      {
+        style: normalizeStyle(
+          { type, style: source[type]?.style ?? defaultValue.style },
+          type
+        )
+      }
+    ])
+  );
 }
 
 function normalizeSelectedIds(selectedIds, components) {

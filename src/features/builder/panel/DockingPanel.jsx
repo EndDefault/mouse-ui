@@ -3,12 +3,14 @@ import { CodePanel } from "../code/CodePanel.jsx";
 import { InspectorPanel } from "../inspector/InspectorPanel.jsx";
 import { BUILDER_PANEL_TABS } from "../workspace/workspaceSettings.js";
 import { LockedComponentsPanel } from "./LockedComponentsPanel.jsx";
+import { StyleDefaultsPanel } from "./StyleDefaultsPanel.jsx";
 
 const PANEL_TABS = [
   { id: BUILDER_PANEL_TABS.ADJUST, label: "조정" },
   { id: BUILDER_PANEL_TABS.STYLE, label: "꾸미기" },
   { id: BUILDER_PANEL_TABS.ANIMATION, label: "애니메이션" },
   { id: BUILDER_PANEL_TABS.LOCKED, label: "잠금" },
+  { id: BUILDER_PANEL_TABS.THEME, label: "기준" },
   { id: BUILDER_PANEL_TABS.HTML, label: "HTML" }
 ];
 
@@ -19,6 +21,7 @@ export function DockingPanel({
   panel,
   component,
   components,
+  styleDefaults,
   code,
   componentCount,
   selectedIds,
@@ -27,6 +30,9 @@ export function DockingPanel({
   onResetPanel,
   onChangeComponent,
   onSetComponentLocked,
+  onRegisterSelectedAsStyleDefault,
+  onApplyStyleDefaultToSelected,
+  onResetStyleDefaults,
   onPlayEnterPreview,
   onToggleStatePreview
 }) {
@@ -43,6 +49,7 @@ export function DockingPanel({
       panel={panel}
       component={component}
       components={components}
+      styleDefaults={styleDefaults}
       code={code}
       componentCount={componentCount}
       selectedIds={selectedIds}
@@ -52,6 +59,9 @@ export function DockingPanel({
       onToggleDocking={toggleDocking}
       onChangeComponent={onChangeComponent}
       onSetComponentLocked={onSetComponentLocked}
+      onRegisterSelectedAsStyleDefault={onRegisterSelectedAsStyleDefault}
+      onApplyStyleDefaultToSelected={onApplyStyleDefaultToSelected}
+      onResetStyleDefaults={onResetStyleDefaults}
       onPlayEnterPreview={onPlayEnterPreview}
       onToggleStatePreview={onToggleStatePreview}
     />
@@ -99,6 +109,7 @@ function PanelShell({
   panel,
   component,
   components,
+  styleDefaults,
   code,
   componentCount,
   selectedIds,
@@ -108,6 +119,9 @@ function PanelShell({
   onToggleDocking,
   onChangeComponent,
   onSetComponentLocked,
+  onRegisterSelectedAsStyleDefault,
+  onApplyStyleDefaultToSelected,
+  onResetStyleDefaults,
   onPlayEnterPreview,
   onToggleStatePreview
 }) {
@@ -157,6 +171,14 @@ function PanelShell({
           <LockedComponentsPanel
             components={components}
             onUnlock={(componentId) => onSetComponentLocked(componentId, false)}
+          />
+        ) : panel.activeTab === BUILDER_PANEL_TABS.THEME ? (
+          <StyleDefaultsPanel
+            selectedComponent={component}
+            styleDefaults={styleDefaults}
+            onRegisterSelected={onRegisterSelectedAsStyleDefault}
+            onApplyToSelected={onApplyStyleDefaultToSelected}
+            onReset={onResetStyleDefaults}
           />
         ) : (
           <InspectorPanel

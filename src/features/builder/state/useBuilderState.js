@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { createComponent } from "../model/createComponent.js";
 import { getCanvasPreset } from "../model/canvasPresets.js";
+import {
+  createDefaultStyleDefaults,
+  mergeStyleDefault
+} from "../model/styleDefaults.js";
 import { updateComponent } from "../model/updateComponent.js";
 import {
   loadBuilderProject,
@@ -11,7 +15,9 @@ import { normalizeProject } from "../storage/projectSerializer.js";
 export function useBuilderState() {
   const [project, setProject] = useState(() => loadBuilderProject());
   const [clipboard, setClipboard] = useState(null);
-  const { canvas, components, selectedId, selectedIds } = project;
+  const { canvas, components, selectedId, selectedIds, styleDefaults } = project;
+  const selectedComponent =
+    components.find((component) => component.id === selectedId) ?? null;
 
   useEffect(() => {
     saveBuilderProject(project);
@@ -22,10 +28,9 @@ export function useBuilderState() {
       const order =
         currentProject.components.filter((component) => component.type === type)
           .length + 1;
-      const component = createComponent(
-        type,
-        order,
-        options
+      const component = mergeStyleDefault(
+        createComponent(type, order, options),
+        currentProject.styleDefaults
       );
 
       return touchProject({
@@ -257,6 +262,47 @@ export function useBuilderState() {
     );
   }
 
+  function registerSelectedAsStyleDefault() {
+    if (!selectedComponent) {
+      return;
+    }
+
+    setProject((currentProject) =>
+      touchProject({
+        ...currentProject,
+        styleDefaults: {
+          ...currentProject.styleDefaults,
+          [selectedComponent.type]: {
+            style: cloneComponent(selectedComponent).style
+          }
+        }
+      })
+    );
+  }
+
+  function applyStyleDefaultToSelected() {
+    if (!selectedComponent) {
+      return;
+    }
+
+    const defaultStyle = styleDefaults?.[selectedComponent.type]?.style;
+
+    if (!defaultStyle) {
+      return;
+    }
+
+    changeComponent(selectedComponent.id, { style: defaultStyle });
+  }
+
+  function resetStyleDefaults() {
+    setProject((currentProject) =>
+      touchProject({
+        ...currentProject,
+        styleDefaults: createDefaultStyleDefaults()
+      })
+    );
+  }
+
   function importProject(nextProject) {
     setProject(normalizeProject(nextProject));
   }
@@ -267,6 +313,7 @@ export function useBuilderState() {
     components,
     selectedId,
     selectedIds,
+    styleDefaults,
     addComponent,
     selectComponent,
     selectComponents,
@@ -274,6 +321,9 @@ export function useBuilderState() {
     moveComponents,
     deleteComponent,
     setComponentLocked,
+    registerSelectedAsStyleDefault,
+    applyStyleDefaultToSelected,
+    resetStyleDefaults,
     copyComponents,
     pasteComponents,
     hasClipboard: Boolean(clipboard?.components.length),

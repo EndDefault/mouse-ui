@@ -1,3 +1,5 @@
+import { mergeStyle } from "./styleDefaults.js";
+
 export function updateComponent(components, id, patch, options = {}) {
   return components.map((component) => {
     if (component.id !== id) {
@@ -15,41 +17,4 @@ export function updateComponent(components, id, patch, options = {}) {
       style: patch.style ? mergeStyle(component.style, patch.style) : component.style
     };
   });
-}
-
-function mergeStyle(currentStyle = {}, patchStyle = {}) {
-  const nextStyle = {
-    ...currentStyle,
-    ...patchStyle
-  };
-
-  if (patchStyle.background) {
-    nextStyle.background = {
-      ...currentStyle.background,
-      ...patchStyle.background,
-      gradient:
-        patchStyle.background.gradient === null
-          ? null
-          : {
-              ...currentStyle.background?.gradient,
-              ...patchStyle.background.gradient
-            }
-    };
-  }
-
-  if (patchStyle.shadow) {
-    nextStyle.shadow = {
-      ...currentStyle.shadow,
-      ...patchStyle.shadow
-    };
-  }
-
-  if (patchStyle.border) {
-    nextStyle.border = {
-      ...currentStyle.border,
-      ...patchStyle.border
-    };
-  }
-
-  return nextStyle;
 }

@@ -23,6 +23,7 @@ export function BuilderPage() {
     components,
     selectedId,
     selectedIds,
+    styleDefaults,
     addComponent,
     selectComponent,
     selectComponents,
@@ -33,6 +34,9 @@ export function BuilderPage() {
     hasClipboard,
     deleteComponent,
     setComponentLocked,
+    registerSelectedAsStyleDefault,
+    applyStyleDefaultToSelected,
+    resetStyleDefaults,
     changeCanvasSize,
     changeCanvasViewport,
     importProject
@@ -129,6 +133,7 @@ export function BuilderPage() {
             panel={settings.panel}
             component={selectedComponent}
             components={components}
+            styleDefaults={styleDefaults}
             code={htmlCode}
             componentCount={components.length}
             selectedIds={selectedIds}
@@ -137,6 +142,9 @@ export function BuilderPage() {
             onResetPanel={resetPanel}
             onChangeComponent={changeComponent}
             onSetComponentLocked={setComponentLocked}
+            onRegisterSelectedAsStyleDefault={registerSelectedAsStyleDefault}
+            onApplyStyleDefaultToSelected={applyStyleDefaultToSelected}
+            onResetStyleDefaults={resetStyleDefaults}
             onPlayEnterPreview={playEnterPreview}
             onToggleStatePreview={toggleStatePreview}
           />
