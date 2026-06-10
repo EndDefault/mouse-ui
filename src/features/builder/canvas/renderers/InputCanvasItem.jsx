@@ -1,19 +1,21 @@
+import { getBackgroundCss } from "../../model/styleValues.js";
+
 export function InputCanvasItem({ component }) {
   return (
     <label
       className="canvas-input-item"
       style={{
-        "--input-bg": component.style.backgroundColor,
+        "--input-bg": getBackgroundCss(component.style),
         "--input-color": component.style.color,
         "--input-radius": `${component.style.borderRadius}px`
       }}
     >
-      <span>{component.label}</span>
+      <span>{component.props.label}</span>
       <input
         readOnly
-        placeholder={component.placeholder}
+        placeholder={component.props.placeholder}
         tabIndex={-1}
-        type={component.inputType}
+        type={component.props.inputType}
       />
     </label>
   );

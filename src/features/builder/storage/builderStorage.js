@@ -1,26 +1,22 @@
-import { normalizeProject } from "./projectSerializer.js";
+import { createEmptyProject, normalizeProject } from "./projectSerializer.js";
 
 const STORAGE_KEY = "mouse-ui.builder.project.v1";
-const EMPTY_PROJECT = {
-  components: [],
-  selectedId: null
-};
 
 export function loadBuilderProject() {
   if (!canUseStorage()) {
-    return EMPTY_PROJECT;
+    return createEmptyProject();
   }
 
   try {
     const rawProject = window.localStorage.getItem(STORAGE_KEY);
 
     if (!rawProject) {
-      return EMPTY_PROJECT;
+      return createEmptyProject();
     }
 
     return normalizeProject(JSON.parse(rawProject));
   } catch {
-    return EMPTY_PROJECT;
+    return createEmptyProject();
   }
 }
 

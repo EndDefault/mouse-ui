@@ -1,17 +1,43 @@
+import {
+  DEFAULT_CANVAS_PRESET_ID,
+  getCanvasPreset
+} from "../model/canvasPresets.js";
 import { COMPONENT_TYPES } from "../model/componentTypes.js";
 
-const SERIALIZER_VERSION = 1;
+const SCHEMA_VERSION = 1;
 const SUPPORTED_TYPES = new Set(Object.values(COMPONENT_TYPES));
+const INTERACTION_EVENTS = new Set(["hover", "click", "enter", "stateChange"]);
+const ANIMATION_TYPES = new Set(["move", "color", "flyOut", "scale", "opacity"]);
+
+export function createEmptyProject() {
+  const now = new Date().toISOString();
+  const preset = getCanvasPreset(DEFAULT_CANVAS_PRESET_ID);
+
+  return {
+    schemaVersion: SCHEMA_VERSION,
+    name: "Untitled",
+    canvas: {
+      presetId: preset.id,
+      width: preset.width,
+      height: preset.height,
+      unit: "px",
+      viewport: {
+        zoom: 1,
+        panX: 0,
+        panY: 0
+      }
+    },
+    components: [],
+    selectedId: null,
+    metadata: {
+      createdAt: now,
+      updatedAt: now
+    }
+  };
+}
 
 export function serializeProject(project) {
-  return JSON.stringify(
-    {
-      version: SERIALIZER_VERSION,
-      ...normalizeProject(project)
-    },
-    null,
-    2
-  );
+  return JSON.stringify(normalizeProject(project), null, 2);
 }
 
 export function parseProjectJson(value) {
@@ -19,6 +45,7 @@ export function parseProjectJson(value) {
 }
 
 export function normalizeProject(project) {
+  const emptyProject = createEmptyProject();
   const components = Array.isArray(project?.components)
     ? project.components.map(normalizeComponent).filter(Boolean)
     : [];
@@ -29,8 +56,40 @@ export function normalizeProject(project) {
     : null;
 
   return {
+    schemaVersion: SCHEMA_VERSION,
+    name: readString(project?.name, emptyProject.name),
+    canvas: normalizeCanvas(project?.canvas, emptyProject.canvas),
     components,
-    selectedId
+    selectedId,
+    metadata: normalizeMetadata(project?.metadata, emptyProject.metadata)
+  };
+}
+
+function normalizeCanvas(canvas, fallbackCanvas) {
+  const presetId = readString(canvas?.presetId, fallbackCanvas.presetId);
+  const preset = getCanvasPreset(presetId);
+
+  return {
+    presetId: preset.id,
+    width: readNumber(canvas?.width, preset.width, 240),
+    height: readNumber(canvas?.height, preset.height, 240),
+    unit: "px",
+    viewport: normalizeViewport(canvas?.viewport, fallbackCanvas.viewport)
+  };
+}
+
+function normalizeViewport(viewport, fallbackViewport) {
+  return {
+    zoom: readNumber(viewport?.zoom, fallbackViewport.zoom, 0.25, 2),
+    panX: readNumber(viewport?.panX, fallbackViewport.panX, -10000, 10000),
+    panY: readNumber(viewport?.panY, fallbackViewport.panY, -10000, 10000)
+  };
+}
+
+function normalizeMetadata(metadata, fallbackMetadata) {
+  return {
+    createdAt: readString(metadata?.createdAt, fallbackMetadata.createdAt),
+    updatedAt: readString(metadata?.updatedAt, fallbackMetadata.updatedAt)
   };
 }
 
@@ -42,61 +101,180 @@ function normalizeComponent(component, index) {
   const common = {
     id: readString(component.id, `${component.type}-${index + 1}`),
     type: component.type,
+    parentId: readNullableString(component.parentId),
+    name: readString(component.name, getDefaultName(component.type)),
     x: readNumber(component.x, 96),
     y: readNumber(component.y, 80),
     width: readNumber(component.width, 120, 32),
     height: readNumber(component.height, 40, 24),
-    style: readObject(component.style)
+    props: normalizeProps(component),
+    style: normalizeStyle(component),
+    interactions: normalizeInteractions(component.interactions)
   };
 
-  if (common.type === COMPONENT_TYPES.BUTTON) {
+  return common;
+}
+
+function normalizeProps(component) {
+  const props = readObject(component.props);
+
+  if (component.type === COMPONENT_TYPES.BUTTON) {
     return {
-      ...common,
-      text: readString(component.text, "버튼"),
-      style: {
-        backgroundColor: readString(common.style.backgroundColor, "#2f9e8f"),
-        color: readString(common.style.color, "#ffffff"),
-        borderRadius: readNumber(common.style.borderRadius, 8)
-      }
+      text: readString(props.text ?? component.text, "버튼")
     };
   }
 
-  if (common.type === COMPONENT_TYPES.TEXT) {
+  if (component.type === COMPONENT_TYPES.TEXT) {
     return {
-      ...common,
-      text: readString(component.text, "텍스트"),
-      style: {
-        color: readString(common.style.color, "#24211f"),
-        fontSize: readNumber(common.style.fontSize, 18, 8)
-      }
+      text: readString(props.text ?? component.text, "텍스트")
     };
   }
 
-  if (common.type === COMPONENT_TYPES.INPUT) {
+  if (component.type === COMPONENT_TYPES.INPUT) {
     return {
-      ...common,
-      label: readString(component.label, "이메일"),
-      placeholder: readString(component.placeholder, "이메일을 입력하세요"),
-      inputType: readString(component.inputType, "email"),
-      style: {
-        backgroundColor: readString(common.style.backgroundColor, "#ffffff"),
-        color: readString(common.style.color, "#24211f"),
-        borderRadius: readNumber(common.style.borderRadius, 8)
-      }
+      label: readString(props.label ?? component.label, "이메일"),
+      placeholder: readString(
+        props.placeholder ?? component.placeholder,
+        "이메일을 입력하세요"
+      ),
+      inputType: readString(props.inputType ?? component.inputType, "email")
     };
   }
 
-  if (common.type === COMPONENT_TYPES.BOX) {
+  if (component.type === COMPONENT_TYPES.IMAGE) {
     return {
-      ...common,
-      style: {
-        backgroundColor: readString(common.style.backgroundColor, "#f0b35a"),
-        borderRadius: readNumber(common.style.borderRadius, 12)
-      }
+      src: readString(props.src ?? component.src, ""),
+      alt: readString(props.alt ?? component.alt, "이미지")
     };
   }
 
-  return null;
+  return {};
+}
+
+function normalizeStyle(component) {
+  const style = readObject(component.style);
+
+  if (component.type === COMPONENT_TYPES.TEXT) {
+    return {
+      color: readString(style.color, "#24211f"),
+      fontSize: readNumber(style.fontSize, 18, 8)
+    };
+  }
+
+  if (component.type === COMPONENT_TYPES.BOX) {
+    return {
+      background: normalizeBackground(style, "#f0b35a"),
+      borderRadius: readNumber(style.borderRadius, 12)
+    };
+  }
+
+  if (component.type === COMPONENT_TYPES.CONTAINER) {
+    return {
+      background: normalizeBackground(style, "#ffffff"),
+      color: readString(style.color, "#24211f"),
+      borderRadius: readNumber(style.borderRadius, 14)
+    };
+  }
+
+  if (component.type === COMPONENT_TYPES.IMAGE) {
+    return {
+      background: normalizeBackground(style, "#e8f2ef"),
+      borderRadius: readNumber(style.borderRadius, 10)
+    };
+  }
+
+  return {
+    background: normalizeBackground(
+      style,
+      component.type === COMPONENT_TYPES.INPUT ? "#ffffff" : "#2f9e8f"
+    ),
+    color: readString(
+      style.color,
+      component.type === COMPONENT_TYPES.INPUT ? "#24211f" : "#ffffff"
+    ),
+    borderRadius: readNumber(style.borderRadius, 8)
+  };
+}
+
+function normalizeBackground(style, fallbackColor) {
+  const background = readObject(style.background);
+  const gradient = normalizeGradient(background.gradient);
+  const type = background.type === "gradient" && gradient ? "gradient" : "solid";
+
+  return {
+    type,
+    color: readString(background.color ?? style.backgroundColor, fallbackColor),
+    gradient: type === "gradient" ? gradient : null
+  };
+}
+
+function normalizeGradient(gradient) {
+  if (!gradient || typeof gradient !== "object") {
+    return null;
+  }
+
+  return {
+    direction: readString(gradient.direction, "to right"),
+    from: readString(gradient.from, "#2563eb"),
+    to: readString(gradient.to, "#14b8a6")
+  };
+}
+
+function normalizeInteractions(interactions) {
+  if (!Array.isArray(interactions)) {
+    return [];
+  }
+
+  return interactions.map(normalizeInteraction).filter(Boolean);
+}
+
+function normalizeInteraction(interaction, index) {
+  const animation = readObject(interaction?.animation);
+  const event = readString(interaction?.event, "hover");
+  const type = readString(animation.type, "opacity");
+
+  if (!INTERACTION_EVENTS.has(event) || !ANIMATION_TYPES.has(type)) {
+    return null;
+  }
+
+  return {
+    id: readString(interaction.id, `interaction-${index + 1}`),
+    event,
+    animation: {
+      type,
+      to: readObject(animation.to),
+      duration: readNumber(animation.duration, 300, 0, 10000),
+      easing: readString(animation.easing, "ease")
+    }
+  };
+}
+
+function getDefaultName(type) {
+  if (type === COMPONENT_TYPES.BUTTON) {
+    return "Button";
+  }
+
+  if (type === COMPONENT_TYPES.TEXT) {
+    return "Text";
+  }
+
+  if (type === COMPONENT_TYPES.INPUT) {
+    return "Input";
+  }
+
+  if (type === COMPONENT_TYPES.BOX) {
+    return "Box";
+  }
+
+  if (type === COMPONENT_TYPES.CONTAINER) {
+    return "Container";
+  }
+
+  if (type === COMPONENT_TYPES.IMAGE) {
+    return "Image";
+  }
+
+  return "Component";
 }
 
 function readObject(value) {
@@ -107,12 +285,16 @@ function readString(value, fallbackValue) {
   return typeof value === "string" ? value : fallbackValue;
 }
 
-function readNumber(value, fallbackValue, minValue = 0) {
+function readNullableString(value) {
+  return typeof value === "string" && value ? value : null;
+}
+
+function readNumber(value, fallbackValue, minValue = 0, maxValue = Infinity) {
   const number = Number(value);
 
   if (!Number.isFinite(number)) {
     return fallbackValue;
   }
 
-  return Math.max(minValue, Math.round(number));
+  return Math.min(maxValue, Math.max(minValue, Math.round(number * 100) / 100));
 }

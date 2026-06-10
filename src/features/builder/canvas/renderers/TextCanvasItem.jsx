@@ -7,7 +7,7 @@ export function TextCanvasItem({ component }) {
         "--text-font-size": `${component.style.fontSize}px`
       }}
     >
-      {component.text}
+      {component.props.text}
     </p>
   );
 }

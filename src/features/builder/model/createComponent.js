@@ -1,23 +1,40 @@
 import { COMPONENT_TYPES } from "./componentTypes.js";
 
-export function createComponent(type, order) {
+export function createComponent(type, order, options = {}) {
   if (type === COMPONENT_TYPES.BUTTON) {
-    return createButtonComponent(order);
+    return applyCreateOptions(createButtonComponent(order), options);
   }
 
   if (type === COMPONENT_TYPES.TEXT) {
-    return createTextComponent(order);
+    return applyCreateOptions(createTextComponent(order), options);
   }
 
   if (type === COMPONENT_TYPES.INPUT) {
-    return createInputComponent(order);
+    return applyCreateOptions(createInputComponent(order), options);
   }
 
   if (type === COMPONENT_TYPES.BOX) {
-    return createBoxComponent(order);
+    return applyCreateOptions(createBoxComponent(order), options);
+  }
+
+  if (type === COMPONENT_TYPES.CONTAINER) {
+    return applyCreateOptions(createContainerComponent(order), options);
+  }
+
+  if (type === COMPONENT_TYPES.IMAGE) {
+    return applyCreateOptions(createImageComponent(order), options);
   }
 
   throw new Error(`Unsupported component type: ${type}`);
+}
+
+function applyCreateOptions(component, options) {
+  return {
+    ...component,
+    parentId: options.parentId ?? component.parentId,
+    x: options.x ?? component.x,
+    y: options.y ?? component.y
+  };
 }
 
 function createBoxComponent(order) {
@@ -26,14 +43,22 @@ function createBoxComponent(order) {
   return {
     id: `box-${order}`,
     type: COMPONENT_TYPES.BOX,
+    parentId: null,
+    name: "Box",
     x: 144 + offset,
     y: 136 + offset,
     width: 180,
     height: 100,
+    props: {},
     style: {
-      backgroundColor: "#f0b35a",
+      background: {
+        type: "solid",
+        color: "#f0b35a",
+        gradient: null
+      },
       borderRadius: 12
-    }
+    },
+    interactions: []
   };
 }
 
@@ -43,18 +68,27 @@ function createInputComponent(order) {
   return {
     id: `input-${order}`,
     type: COMPONENT_TYPES.INPUT,
-    label: "이메일",
-    placeholder: "이메일을 입력하세요",
-    inputType: "email",
+    parentId: null,
+    name: "Input",
     x: 128 + offset,
     y: 120 + offset,
     width: 240,
     height: 68,
+    props: {
+      label: "이메일",
+      placeholder: "이메일을 입력하세요",
+      inputType: "email"
+    },
     style: {
-      backgroundColor: "#ffffff",
+      background: {
+        type: "solid",
+        color: "#ffffff",
+        gradient: null
+      },
       color: "#24211f",
       borderRadius: 8
-    }
+    },
+    interactions: []
   };
 }
 
@@ -64,15 +98,20 @@ function createTextComponent(order) {
   return {
     id: `text-${order}`,
     type: COMPONENT_TYPES.TEXT,
-    text: "텍스트",
+    parentId: null,
+    name: "Text",
     x: 112 + offset,
     y: 104 + offset,
     width: 180,
     height: 40,
+    props: {
+      text: "텍스트"
+    },
     style: {
       color: "#24211f",
       fontSize: 18
-    }
+    },
+    interactions: []
   };
 }
 
@@ -82,15 +121,78 @@ function createButtonComponent(order) {
   return {
     id: `button-${order}`,
     type: COMPONENT_TYPES.BUTTON,
-    text: "버튼",
+    parentId: null,
+    name: "Button",
     x: 96 + offset,
     y: 80 + offset,
     width: 132,
     height: 44,
+    props: {
+      text: "버튼"
+    },
     style: {
-      backgroundColor: "#2f9e8f",
+      background: {
+        type: "solid",
+        color: "#2f9e8f",
+        gradient: null
+      },
       color: "#ffffff",
       borderRadius: 8
-    }
+    },
+    interactions: []
+  };
+}
+
+function createContainerComponent(order) {
+  const offset = (order - 1) * 16;
+
+  return {
+    id: `container-${order}`,
+    type: COMPONENT_TYPES.CONTAINER,
+    parentId: null,
+    name: "Container",
+    x: 80 + offset,
+    y: 72 + offset,
+    width: 320,
+    height: 220,
+    props: {},
+    style: {
+      background: {
+        type: "solid",
+        color: "#ffffff",
+        gradient: null
+      },
+      color: "#24211f",
+      borderRadius: 14
+    },
+    interactions: []
+  };
+}
+
+function createImageComponent(order) {
+  const offset = (order - 1) * 16;
+
+  return {
+    id: `image-${order}`,
+    type: COMPONENT_TYPES.IMAGE,
+    parentId: null,
+    name: "Image",
+    x: 160 + offset,
+    y: 144 + offset,
+    width: 180,
+    height: 120,
+    props: {
+      src: "",
+      alt: "이미지"
+    },
+    style: {
+      background: {
+        type: "solid",
+        color: "#e8f2ef",
+        gradient: null
+      },
+      borderRadius: 10
+    },
+    interactions: []
   };
 }

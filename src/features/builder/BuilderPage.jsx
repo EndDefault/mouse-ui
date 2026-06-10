@@ -9,14 +9,18 @@ import "./builder.css";
 
 export function BuilderPage() {
   const {
+    project,
+    canvas,
     components,
     selectedId,
     addComponent,
     selectComponent,
     changeComponent,
+    changeCanvasSize,
+    changeCanvasViewport,
     importProject
   } = useBuilderState();
-  const htmlCode = generateHtml(components);
+  const htmlCode = generateHtml(project);
   const selectedComponent =
     components.find((component) => component.id === selectedId) ?? null;
 
@@ -26,25 +30,28 @@ export function BuilderPage() {
         <div className="builder-topbar">
           <div>
             <h1>mouse-ui</h1>
-            <span>v0.5.0</span>
+            <span>v1.0.0</span>
           </div>
-          <strong>저장과 복사</strong>
+          <strong>화면 설계 도구</strong>
         </div>
       }
       toolbar={
         <Toolbar
-          components={components}
-          selectedId={selectedId}
+          project={project}
+          canvas={canvas}
           onAddComponent={addComponent}
+          onChangeCanvasSize={changeCanvasSize}
           onImportProject={importProject}
         />
       }
       canvas={
         <Canvas
+          canvas={canvas}
           components={components}
           selectedId={selectedId}
           onSelectComponent={selectComponent}
           onChangeComponent={changeComponent}
+          onChangeViewport={changeCanvasViewport}
         />
       }
       sidePanel={

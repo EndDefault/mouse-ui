@@ -1,16 +1,18 @@
+import { getBackgroundCss } from "../../model/styleValues.js";
+
 export function ButtonCanvasItem({ component }) {
   return (
     <button
       className="canvas-button-item"
       style={{
-        "--button-bg": component.style.backgroundColor,
+        "--button-bg": getBackgroundCss(component.style),
         "--button-color": component.style.color,
         borderRadius: component.style.borderRadius
       }}
       type="button"
       tabIndex={-1}
     >
-      {component.text}
+      {component.props.text}
     </button>
   );
 }

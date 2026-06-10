@@ -1,4 +1,5 @@
 import { COMPONENT_TYPES } from "../model/componentTypes.js";
+import { getSolidBackgroundColor } from "../model/styleValues.js";
 import { EmptyInspector } from "./EmptyInspector.jsx";
 import { ColorPropertyGroup } from "./fields/ColorPropertyGroup.jsx";
 import { InputPropertyGroup } from "./fields/InputPropertyGroup.jsx";
@@ -19,6 +20,10 @@ export function InspectorPanel({ component, onChangeComponent }) {
 
   function updateStyle(stylePatch) {
     updateComponent({ style: stylePatch });
+  }
+
+  function updateProps(propsPatch) {
+    updateComponent({ props: propsPatch });
   }
 
   return (
@@ -44,13 +49,13 @@ export function InspectorPanel({ component, onChangeComponent }) {
       {component.type === COMPONENT_TYPES.BUTTON ||
       component.type === COMPONENT_TYPES.TEXT ? (
         <TextProperty
-          value={component.text}
-          onChange={(text) => updateComponent({ text })}
+          value={component.props.text}
+          onChange={(text) => updateProps({ text })}
         />
       ) : null}
 
       {component.type === COMPONENT_TYPES.INPUT ? (
-        <InputPropertyGroup component={component} onChange={updateComponent} />
+        <InputPropertyGroup component={component} onChange={updateProps} />
       ) : null}
 
       <PositionPropertyGroup
@@ -63,10 +68,10 @@ export function InspectorPanel({ component, onChangeComponent }) {
         height={component.height}
         onChange={updateComponent}
       />
-      {component.style.backgroundColor && component.style.borderRadius != null ? (
+      {component.style.background && component.style.borderRadius != null ? (
         <>
           <ColorPropertyGroup
-            backgroundColor={component.style.backgroundColor}
+            backgroundColor={getSolidBackgroundColor(component.style)}
             color={component.style.color}
             showTextColor={component.style.color != null}
             onChange={updateStyle}

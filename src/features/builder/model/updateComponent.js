@@ -7,10 +7,31 @@ export function updateComponent(components, id, patch) {
     return {
       ...component,
       ...patch,
-      style: {
-        ...component.style,
-        ...patch.style
-      }
+      props: patch.props ? { ...component.props, ...patch.props } : component.props,
+      style: patch.style ? mergeStyle(component.style, patch.style) : component.style
     };
   });
+}
+
+function mergeStyle(currentStyle = {}, patchStyle = {}) {
+  const nextStyle = {
+    ...currentStyle,
+    ...patchStyle
+  };
+
+  if (patchStyle.background) {
+    nextStyle.background = {
+      ...currentStyle.background,
+      ...patchStyle.background,
+      gradient:
+        patchStyle.background.gradient === null
+          ? null
+          : {
+              ...currentStyle.background?.gradient,
+              ...patchStyle.background.gradient
+            }
+    };
+  }
+
+  return nextStyle;
 }

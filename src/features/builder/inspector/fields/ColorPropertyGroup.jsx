@@ -15,7 +15,13 @@ export function ColorPropertyGroup({
             type="color"
             value={backgroundColor}
             onChange={(event) =>
-              onChange({ backgroundColor: event.target.value })
+              onChange({
+                background: {
+                  type: "solid",
+                  color: event.target.value,
+                  gradient: null
+                }
+              })
             }
           />
         </PropertyRow>

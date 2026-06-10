@@ -5,8 +5,7 @@ import { ProjectJsonControls } from "./ProjectJsonControls.jsx";
 import { TextTool } from "./TextTool.jsx";
 
 export function Toolbar({
-  components,
-  selectedId,
+  project,
   onAddComponent,
   onImportProject
 }) {
@@ -20,7 +19,7 @@ export function Toolbar({
         <BoxTool onAdd={onAddComponent} />
       </div>
       <ProjectJsonControls
-        project={{ components, selectedId }}
+        project={project}
         onImportProject={onImportProject}
       />
     </div>

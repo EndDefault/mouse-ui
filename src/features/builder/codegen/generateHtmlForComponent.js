@@ -1,50 +1,80 @@
 import { COMPONENT_TYPES } from "../model/componentTypes.js";
+import { getBackgroundCss } from "../model/styleValues.js";
 import { escapeHtml } from "./escapeHtml.js";
 
-export function generateHtmlForComponent(component) {
+export function generateHtmlForComponent(component, components = [], depth = 1) {
   if (component.type === COMPONENT_TYPES.BUTTON) {
-    return generateButtonHtml(component);
+    return generateButtonHtml(component, depth);
   }
 
   if (component.type === COMPONENT_TYPES.TEXT) {
-    return generateTextHtml(component);
+    return generateTextHtml(component, depth);
   }
 
   if (component.type === COMPONENT_TYPES.INPUT) {
-    return generateInputHtml(component);
+    return generateInputHtml(component, depth);
   }
 
   if (component.type === COMPONENT_TYPES.BOX) {
-    return generateBoxHtml(component);
+    return generateBoxHtml(component, depth);
+  }
+
+  if (component.type === COMPONENT_TYPES.CONTAINER) {
+    return generateContainerHtml(component, components, depth);
+  }
+
+  if (component.type === COMPONENT_TYPES.IMAGE) {
+    return generateImageHtml(component, depth);
   }
 
   return "";
 }
 
-function generateBoxHtml(component) {
-  const style = [
-    "position:absolute",
-    `left:${component.x}px`,
-    `top:${component.y}px`,
-    `width:${component.width}px`,
-    `height:${component.height}px`,
-    `background:${component.style.backgroundColor}`,
-    `border-radius:${component.style.borderRadius}px`
-  ].join("; ");
+function generateContainerHtml(component, components, depth) {
+  const children = components
+    .filter((child) => child.parentId === component.id)
+    .map((child) => generateHtmlForComponent(child, components, depth + 1))
+    .join("\n");
+  const style = buildBaseStyle(component, [
+    `background:${getBackgroundCss(component.style)}`,
+    `color:${component.style.color}`,
+    `border-radius:${component.style.borderRadius}px`,
+    "overflow:hidden"
+  ]);
+  const indent = getIndent(depth);
+  const closeIndent = children ? `\n${indent}` : "";
 
-  return `  <div style="${style}"></div>`;
+  return `${indent}<div style="${style}">${children ? `\n${children}` : ""}${closeIndent}</div>`;
 }
 
-function generateInputHtml(component) {
-  const wrapperStyle = [
-    "position:absolute",
-    `left:${component.x}px`,
-    `top:${component.y}px`,
-    `width:${component.width}px`,
-    `height:${component.height}px`,
+function generateBoxHtml(component, depth) {
+  const style = buildBaseStyle(component, [
+    `background:${getBackgroundCss(component.style)}`,
+    `border-radius:${component.style.borderRadius}px`
+  ]);
+
+  return `${getIndent(depth)}<div style="${style}"></div>`;
+}
+
+function generateImageHtml(component, depth) {
+  const style = buildBaseStyle(component, [
+    `background:${getBackgroundCss(component.style)}`,
+    `border-radius:${component.style.borderRadius}px`,
+    "object-fit:cover"
+  ]);
+
+  if (!component.props.src) {
+    return `${getIndent(depth)}<div role="img" aria-label="${escapeHtml(component.props.alt)}" style="${style}"></div>`;
+  }
+
+  return `${getIndent(depth)}<img src="${escapeHtml(component.props.src)}" alt="${escapeHtml(component.props.alt)}" style="${style}" />`;
+}
+
+function generateInputHtml(component, depth) {
+  const wrapperStyle = buildBaseStyle(component, [
     `color:${component.style.color}`,
     "font:700 12px system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
-  ].join("; ");
+  ]);
   const inputStyle = [
     "display:block",
     "width:100%",
@@ -53,51 +83,57 @@ function generateInputHtml(component) {
     "padding:0 12px",
     `border-radius:${component.style.borderRadius}px`,
     "border:1px solid #d8cfc3",
-    `background:${component.style.backgroundColor}`,
+    `background:${getBackgroundCss(component.style)}`,
     `color:${component.style.color}`,
     "font:600 14px system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
   ].join("; ");
+  const indent = getIndent(depth);
 
   return [
-    `  <label style="${wrapperStyle}">`,
-    `    ${escapeHtml(component.label)}`,
-    `    <input type="${escapeHtml(component.inputType)}" placeholder="${escapeHtml(component.placeholder)}" style="${inputStyle}" />`,
-    "  </label>"
+    `${indent}<label style="${wrapperStyle}">`,
+    `${indent}  ${escapeHtml(component.props.label)}`,
+    `${indent}  <input type="${escapeHtml(component.props.inputType)}" placeholder="${escapeHtml(component.props.placeholder)}" style="${inputStyle}" />`,
+    `${indent}</label>`
   ].join("\n");
 }
 
-function generateTextHtml(component) {
-  const style = [
-    "position:absolute",
-    `left:${component.x}px`,
-    `top:${component.y}px`,
-    `width:${component.width}px`,
-    `height:${component.height}px`,
-    `margin:0`,
+function generateTextHtml(component, depth) {
+  const style = buildBaseStyle(component, [
+    "margin:0",
     `color:${component.style.color}`,
     `font-size:${component.style.fontSize}px`,
     "font-weight:700",
     "display:flex",
     "align-items:center"
-  ].join("; ");
+  ]);
 
-  return `  <p style="${style}">${escapeHtml(component.text)}</p>`;
+  return `${getIndent(depth)}<p style="${style}">${escapeHtml(component.props.text)}</p>`;
 }
 
-function generateButtonHtml(component) {
-  const style = [
-    "position:absolute",
-    `left:${component.x}px`,
-    `top:${component.y}px`,
-    `width:${component.width}px`,
-    `height:${component.height}px`,
-    `background:${component.style.backgroundColor}`,
+function generateButtonHtml(component, depth) {
+  const style = buildBaseStyle(component, [
+    `background:${getBackgroundCss(component.style)}`,
     `color:${component.style.color}`,
     `border-radius:${component.style.borderRadius}px`,
     "border:0",
     "font:600 14px system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif",
     "cursor:pointer"
-  ].join("; ");
+  ]);
 
-  return `  <button style="${style}">\n    ${escapeHtml(component.text)}\n  </button>`;
+  return `${getIndent(depth)}<button style="${style}">\n${getIndent(depth + 1)}${escapeHtml(component.props.text)}\n${getIndent(depth)}</button>`;
+}
+
+function buildBaseStyle(component, declarations = []) {
+  return [
+    "position:absolute",
+    `left:${component.x}px`,
+    `top:${component.y}px`,
+    `width:${component.width}px`,
+    `height:${component.height}px`,
+    ...declarations
+  ].join("; ");
+}
+
+function getIndent(depth) {
+  return "  ".repeat(depth);
 }
