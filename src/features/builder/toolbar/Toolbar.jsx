@@ -1,12 +1,15 @@
 import { ButtonTool } from "./ButtonTool.jsx";
 import { BoxTool } from "./BoxTool.jsx";
+import { CanvasSizeControl } from "./CanvasSizeControl.jsx";
 import { InputTool } from "./InputTool.jsx";
 import { ProjectJsonControls } from "./ProjectJsonControls.jsx";
 import { TextTool } from "./TextTool.jsx";
 
 export function Toolbar({
   project,
+  canvas,
   onAddComponent,
+  onChangeCanvasSize,
   onImportProject
 }) {
   return (
@@ -18,6 +21,10 @@ export function Toolbar({
         <InputTool onAdd={onAddComponent} />
         <BoxTool onAdd={onAddComponent} />
       </div>
+      <CanvasSizeControl
+        canvas={canvas}
+        onChangeCanvasSize={onChangeCanvasSize}
+      />
       <ProjectJsonControls
         project={project}
         onImportProject={onImportProject}
