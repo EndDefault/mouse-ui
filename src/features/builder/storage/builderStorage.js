@@ -1,3 +1,5 @@
+import { normalizeProject } from "./projectSerializer.js";
+
 const STORAGE_KEY = "mouse-ui.builder.project.v1";
 const EMPTY_PROJECT = {
   components: [],
@@ -35,22 +37,6 @@ export function saveBuilderProject(project) {
   } catch {
     // Saving is best-effort. The builder should keep working if storage fails.
   }
-}
-
-function normalizeProject(project) {
-  const components = Array.isArray(project?.components)
-    ? project.components
-    : [];
-  const selectedId = components.some(
-    (component) => component.id === project?.selectedId
-  )
-    ? project.selectedId
-    : null;
-
-  return {
-    components,
-    selectedId
-  };
 }
 
 function canUseStorage() {

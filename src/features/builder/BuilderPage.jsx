@@ -13,7 +13,8 @@ export function BuilderPage() {
     selectedId,
     addComponent,
     selectComponent,
-    changeComponent
+    changeComponent,
+    importProject
   } = useBuilderState();
   const htmlCode = generateHtml(components);
   const selectedComponent =
@@ -30,7 +31,14 @@ export function BuilderPage() {
           <strong>컴포넌트 확장</strong>
         </div>
       }
-      toolbar={<Toolbar onAddComponent={addComponent} />}
+      toolbar={
+        <Toolbar
+          components={components}
+          selectedId={selectedId}
+          onAddComponent={addComponent}
+          onImportProject={importProject}
+        />
+      }
       canvas={
         <Canvas
           components={components}

@@ -5,6 +5,7 @@ import {
   loadBuilderProject,
   saveBuilderProject
 } from "../storage/builderStorage.js";
+import { normalizeProject } from "../storage/projectSerializer.js";
 
 export function useBuilderState() {
   const [project, setProject] = useState(() => loadBuilderProject());
@@ -42,11 +43,16 @@ export function useBuilderState() {
     }));
   }
 
+  function importProject(nextProject) {
+    setProject(normalizeProject(nextProject));
+  }
+
   return {
     components,
     selectedId,
     addComponent,
     selectComponent,
-    changeComponent
+    changeComponent,
+    importProject
   };
 }
