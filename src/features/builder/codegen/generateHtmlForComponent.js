@@ -25,6 +25,10 @@ export function generateHtmlForComponent(component, components = [], depth = 1) 
     return generateContainerHtml(component, components, depth);
   }
 
+  if (component.type === COMPONENT_TYPES.DIV_BOX) {
+    return generateDivBoxHtml(component, depth);
+  }
+
   if (component.type === COMPONENT_TYPES.IMAGE) {
     return generateImageHtml(component, depth);
   }
@@ -47,6 +51,15 @@ function generateContainerHtml(component, components, depth) {
   const closeIndent = children ? `\n${indent}` : "";
 
   return `${indent}<div ${renderAttributes(component, style)}>${children ? `\n${children}` : ""}${closeIndent}</div>`;
+}
+
+function generateDivBoxHtml(component, depth) {
+  const style = buildBaseStyle(component, [
+    `background:${getBackgroundCss(component.style)}`,
+    `border-radius:${component.style.borderRadius}px`
+  ]);
+
+  return `${getIndent(depth)}<div ${renderAttributes(component, style)}></div>`;
 }
 
 function generateImageHtml(component, depth) {

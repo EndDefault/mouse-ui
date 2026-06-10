@@ -18,6 +18,10 @@ export function createComponent(type, order, options = {}) {
     return applyCreateOptions(createContainerComponent(order), options);
   }
 
+  if (type === COMPONENT_TYPES.DIV_BOX) {
+    return applyCreateOptions(createDivBoxComponent(order), options);
+  }
+
   if (type === COMPONENT_TYPES.IMAGE) {
     return applyCreateOptions(createImageComponent(order), options);
   }
@@ -138,6 +142,31 @@ function createContainerComponent(order) {
       },
       color: "#24211f",
       borderRadius: 14
+    }),
+    interactions: []
+  };
+}
+
+function createDivBoxComponent(order) {
+  const offset = (order - 1) * 16;
+
+  return {
+    id: `div-box-${order}`,
+    type: COMPONENT_TYPES.DIV_BOX,
+    parentId: null,
+    name: "Div Box",
+    x: 104 + offset,
+    y: 96 + offset,
+    width: 220,
+    height: 140,
+    props: {},
+    style: createElementStyle({
+      background: {
+        type: "solid",
+        color: "#f7c873",
+        gradient: null
+      },
+      borderRadius: 16
     }),
     interactions: []
   };

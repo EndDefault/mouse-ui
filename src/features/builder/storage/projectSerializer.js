@@ -208,6 +208,13 @@ function normalizeStyle(component, type) {
     });
   }
 
+  if (type === COMPONENT_TYPES.DIV_BOX) {
+    return withVisualStyle(style, {
+      background: normalizeBackground(style, "#f7c873"),
+      borderRadius: readNumber(style.borderRadius, 16)
+    });
+  }
+
   if (type === COMPONENT_TYPES.IMAGE) {
     return withVisualStyle(style, {
       background: normalizeBackground(style, "#e8f2ef"),
@@ -342,6 +349,10 @@ function getDefaultName(type) {
 
   if (type === COMPONENT_TYPES.CONTAINER) {
     return "Container";
+  }
+
+  if (type === COMPONENT_TYPES.DIV_BOX) {
+    return "Div Box";
   }
 
   if (type === COMPONENT_TYPES.IMAGE) {

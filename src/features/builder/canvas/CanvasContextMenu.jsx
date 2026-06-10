@@ -5,6 +5,7 @@ const MENU_ITEMS = [
   { type: COMPONENT_TYPES.TEXT, label: "텍스트 추가" },
   { type: COMPONENT_TYPES.INPUT, label: "input 추가" },
   { type: COMPONENT_TYPES.IMAGE, label: "이미지 추가" },
+  { type: COMPONENT_TYPES.DIV_BOX, label: "div 박스 추가" },
   { type: COMPONENT_TYPES.CONTAINER, label: "컨테이너 추가" }
 ];
 
