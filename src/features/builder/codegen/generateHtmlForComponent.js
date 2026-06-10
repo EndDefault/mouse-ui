@@ -100,7 +100,9 @@ function generateTextHtml(component, depth) {
     `border-radius:${component.style.borderRadius ?? 0}px`,
     "font-weight:700",
     "display:flex",
-    "align-items:center"
+    "align-items:center",
+    "justify-content:center",
+    "text-align:center"
   ]);
 
   return `${getIndent(depth)}<p ${renderAttributes(component, style)}>${escapeHtml(component.props.text)}</p>`;
