@@ -23,6 +23,7 @@ src/features/builder/
       TextCanvasItem.jsx
       InputCanvasItem.jsx
       ContainerCanvasItem.jsx
+      DivBoxCanvasItem.jsx
       ImageCanvasItem.jsx
 
   code/
@@ -42,6 +43,7 @@ src/features/builder/
     fields/
       BorderPropertyGroup.jsx
       ColorPropertyGroup.jsx
+      NumberInput.jsx
       OpacityProperty.jsx
       RadiusProperty.jsx
       ShadowPropertyGroup.jsx
@@ -66,6 +68,7 @@ src/features/builder/
   toolbar/
     Toolbar.jsx
     CanvasSizeControl.jsx
+    DivBoxTool.jsx
     ProjectJsonControls.jsx
 
   workspace/
@@ -90,3 +93,8 @@ src/features/builder/
 - 컨테이너 중첩 렌더링은 `canvas/CanvasItemFrame.jsx`와 `codegen/generateHtmlForComponent.js`에서 같은 `parentId` 관계를 사용한다.
 - 그라데이션, 그림자, border, 투명도 변환은 `model/styleValues.js`에 둔다.
 - 작업 패널 위치와 크기는 `workspace/useWorkspaceSettings.js`에서 관리한다.
+
+## v1.3.2 관련 기준
+
+- 꾸미기용 `divBox`는 새 컴포넌트 타입으로 관리하되, 컨테이너처럼 자식 요소를 담는 역할은 하지 않는다.
+- 숫자 입력 중간 상태는 `inspector/fields/NumberInput.jsx`에서 관리한다.

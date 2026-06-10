@@ -56,9 +56,23 @@ v1 데이터는 사용자가 만든 UI를 복원할 수 있는 project JSON과, 
 }
 ```
 
+입력창 props 예시:
+
+```js
+{
+  label: "이메일",
+  showLabel: true,
+  placeholder: "이메일을 입력하세요",
+  inputType: "email"
+}
+```
+
+`showLabel`이 false이면 캔버스와 생성 HTML에서 라벨 텍스트를 숨긴다.
+
 지원 타입:
 
 - `container`
+- `divBox`
 - `button`
 - `text`
 - `input`
@@ -73,8 +87,16 @@ legacy 타입:
 - `parentId`가 없으면 최상위 캔버스 요소다.
 - `parentId`가 있으면 좌표는 부모 컨테이너 기준으로 해석한다.
 - 컨테이너 안에는 버튼, 텍스트, input, 이미지, 컨테이너를 넣을 수 있다.
+- 컨테이너 안에는 꾸미기용 `divBox`도 넣을 수 있다.
 - 컨테이너를 이동하면 내부 요소는 부모 기준 좌표를 유지하므로 화면에서는 함께 이동한다.
 - HTML 생성 시 `parentId` 관계를 사용해 중첩된 `<div>` 구조를 만든다.
+
+## 꾸미기용 divBox 규칙
+
+- `divBox`는 자식을 담는 구조용 컨테이너가 아니라 장식용 `<div>`다.
+- `divBox`는 배경, 그라데이션, 그림자, border, 모서리, 투명도 편집을 지원한다.
+- HTML 생성 시 빈 `<div>`로 출력한다.
+- `parentId`가 있으면 부모 컨테이너 기준 좌표로 배치된다.
 
 ## style 구조
 
