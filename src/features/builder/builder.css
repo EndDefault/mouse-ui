@@ -7,7 +7,7 @@
   padding: 0 20px;
 }
 
-.builder-topbar div {
+.builder-topbar > div:first-child {
   display: flex;
   align-items: baseline;
   min-width: 0;
@@ -32,6 +32,50 @@
   color: #4b4741;
   font-size: 14px;
   font-weight: 700;
+}
+
+.builder-topbar-controls {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 8px;
+}
+
+.builder-topbar-controls .canvas-size-control,
+.builder-topbar-controls .project-json-controls {
+  display: flex;
+  align-items: center;
+  padding: 0;
+  border: 0;
+  gap: 8px;
+}
+
+.builder-topbar-controls .canvas-size-control h2,
+.builder-topbar-controls .project-json-controls h2,
+.builder-topbar-controls .canvas-size-control span,
+.builder-topbar-controls .project-json-controls span {
+  display: none;
+}
+
+.builder-topbar-controls .canvas-size-control label {
+  display: block;
+}
+
+.builder-topbar-controls .canvas-size-control select,
+.builder-topbar-controls .canvas-size-control input {
+  width: 112px;
+}
+
+.builder-topbar-controls .canvas-size-fields {
+  display: flex;
+  gap: 6px;
+}
+
+.builder-topbar-controls .project-json-controls button,
+.builder-topbar-controls .copy-code-button {
+  width: auto;
+  min-width: 68px;
+  height: 34px;
 }
 
 .builder-side-panel {

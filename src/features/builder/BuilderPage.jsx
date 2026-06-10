@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { AppLayout } from "../../app/AppLayout.jsx";
 import { Canvas } from "./canvas/Canvas.jsx";
+import { CopyCodeButton } from "./code/CopyCodeButton.jsx";
 import { generateHtml } from "./codegen/generateHtml.js";
 import { DockingPanel } from "./panel/DockingPanel.jsx";
 import { useBuilderState } from "./state/useBuilderState.js";
-import { Toolbar } from "./toolbar/Toolbar.jsx";
+import { CanvasSizeControl } from "./toolbar/CanvasSizeControl.jsx";
+import { ProjectJsonControls } from "./toolbar/ProjectJsonControls.jsx";
 import { useWorkspaceSettings } from "./workspace/useWorkspaceSettings.js";
 import "./builder.css";
 
@@ -62,19 +64,20 @@ export function BuilderPage() {
         <div className="builder-topbar">
           <div>
             <h1>mouse-ui</h1>
-            <span>v1.3.2</span>
+            <span>v1.4.0</span>
           </div>
-          <strong>화면 설계 도구</strong>
+          <div className="builder-topbar-controls">
+            <CanvasSizeControl
+              canvas={canvas}
+              onChangeCanvasSize={changeCanvasSize}
+            />
+            <ProjectJsonControls
+              project={project}
+              onImportProject={importProject}
+            />
+            <CopyCodeButton code={htmlCode} />
+          </div>
         </div>
-      }
-      toolbar={
-        <Toolbar
-          project={project}
-          canvas={canvas}
-          onAddComponent={addComponent}
-          onChangeCanvasSize={changeCanvasSize}
-          onImportProject={importProject}
-        />
       }
       canvas={
         <div className="builder-canvas-area">

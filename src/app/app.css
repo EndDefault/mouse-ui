@@ -46,12 +46,20 @@ button {
 
 .app-workspace {
   display: grid;
-  grid-template-columns: 216px minmax(500px, 1fr);
+  grid-template-columns: minmax(500px, 1fr);
   min-height: 0;
 }
 
-.app-workspace.has-side-panel {
+.app-workspace.has-toolbar {
+  grid-template-columns: 216px minmax(500px, 1fr);
+}
+
+.app-workspace.has-toolbar.has-side-panel {
   grid-template-columns: 216px minmax(500px, 1fr) 360px;
+}
+
+.app-workspace.has-side-panel:not(.has-toolbar) {
+  grid-template-columns: minmax(500px, 1fr) 360px;
 }
 
 .app-toolbar {
