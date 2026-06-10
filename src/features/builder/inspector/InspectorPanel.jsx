@@ -84,6 +84,12 @@ export function InspectorPanel({
             <TextProperty
               value={component.props.text}
               onChange={(text) => updateProps({ text })}
+              fontSize={
+                component.type === COMPONENT_TYPES.TEXT
+                  ? component.style.fontSize
+                  : null
+              }
+              onChangeFontSize={(fontSize) => updateStyle({ fontSize })}
             />
           ) : null}
 
