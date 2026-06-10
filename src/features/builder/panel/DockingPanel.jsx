@@ -26,6 +26,14 @@ export function DockingPanel({
   onPlayEnterPreview,
   onToggleStatePreview
 }) {
+  function toggleDocking() {
+    onChangePanel({
+      isDocked: !panel.isDocked,
+      x: panel.isDocked ? 24 : panel.x,
+      y: panel.isDocked ? 24 : panel.y
+    });
+  }
+
   const content = (
     <PanelShell
       panel={panel}
@@ -36,6 +44,7 @@ export function DockingPanel({
       animationPreview={animationPreview}
       onChangePanel={onChangePanel}
       onResetPanel={onResetPanel}
+      onToggleDocking={toggleDocking}
       onChangeComponent={onChangeComponent}
       onPlayEnterPreview={onPlayEnterPreview}
       onToggleStatePreview={onToggleStatePreview}
@@ -58,6 +67,7 @@ export function DockingPanel({
       bounds="parent"
       className="docking-panel-rnd"
       dragHandleClassName="docking-panel-drag-handle"
+      cancel=".docking-panel-actions, .docking-panel-tabs, .docking-panel-body"
       minHeight={PANEL_MIN_HEIGHT}
       minWidth={PANEL_MIN_WIDTH}
       position={{ x: panel.x, y: panel.y }}
@@ -88,21 +98,22 @@ function PanelShell({
   animationPreview,
   onChangePanel,
   onResetPanel,
+  onToggleDocking,
   onChangeComponent,
   onPlayEnterPreview,
   onToggleStatePreview
 }) {
   return (
     <>
-      <div className="docking-panel-header">
-        <div className="docking-panel-title docking-panel-drag-handle">
+      <div className="docking-panel-header docking-panel-drag-handle">
+        <div className="docking-panel-title">
           <strong>작업 패널</strong>
           <span>{panel.isDocked ? "오른쪽 고정" : "자유 이동"}</span>
         </div>
         <div className="docking-panel-actions">
           <button
             type="button"
-            onClick={() => onChangePanel({ isDocked: !panel.isDocked })}
+            onClick={onToggleDocking}
           >
             {panel.isDocked ? "떼기" : "붙이기"}
           </button>

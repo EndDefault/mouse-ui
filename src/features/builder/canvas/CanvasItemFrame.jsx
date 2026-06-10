@@ -18,7 +18,6 @@ const RESIZE_HANDLE_STYLES = {
   bottomLeft: { width: 10, height: 10, bottom: -5, left: -5 },
   topLeft: { width: 10, height: 10, top: -5, left: -5 }
 };
-const NESTED_FRAME_CANCEL_SELECTOR = ".canvas-item-frame .canvas-item-frame";
 
 export function CanvasItemFrame({
   component,
@@ -79,7 +78,13 @@ export function CanvasItemFrame({
     });
   }
 
-  function handleDragStart(_event, data) {
+  function handleMouseDown(event) {
+    event.stopPropagation();
+  }
+
+  function handleDragStart(event, data) {
+    event.stopPropagation();
+
     if (!isSelected) {
       onSelect(component.id);
     }
@@ -90,7 +95,9 @@ export function CanvasItemFrame({
     };
   }
 
-  function handleDrag(_event, data) {
+  function handleDrag(event, data) {
+    event.stopPropagation();
+
     if (!isSelected || selectedIds.length < 2) {
       return;
     }
@@ -118,7 +125,8 @@ export function CanvasItemFrame({
     onMoveComponents(selectedIds, delta);
   }
 
-  function handleDragStop(_event, data) {
+  function handleDragStop(event, data) {
+    event.stopPropagation();
     dragPositionRef.current = null;
 
     if (isSelected && selectedIds.length > 1) {
@@ -131,7 +139,9 @@ export function CanvasItemFrame({
     });
   }
 
-  function handleResizeStop(_event, _direction, element, _delta, position) {
+  function handleResizeStop(event, _direction, element, _delta, position) {
+    event.stopPropagation();
+
     onChange(component.id, {
       x: Math.round(position.x),
       y: Math.round(position.y),
@@ -143,7 +153,6 @@ export function CanvasItemFrame({
   return (
     <Rnd
       bounds="parent"
-      cancel={NESTED_FRAME_CANCEL_SELECTOR}
       className={className}
       minWidth={64}
       minHeight={32}
@@ -153,6 +162,7 @@ export function CanvasItemFrame({
       size={{ width: component.width, height: component.height }}
       onClick={handleClick}
       onContextMenu={handleContextMenu}
+      onMouseDown={handleMouseDown}
       onDrag={handleDrag}
       onDragStart={handleDragStart}
       onDragStop={handleDragStop}

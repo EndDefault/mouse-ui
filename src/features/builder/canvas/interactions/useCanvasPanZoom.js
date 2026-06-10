@@ -39,10 +39,6 @@ export function useCanvasPanZoom({ viewport, onChangeViewport }) {
   }, []);
 
   function handleWheel(event) {
-    if (!event.altKey) {
-      return;
-    }
-
     event.preventDefault();
     zoomAtPointer(event);
   }
