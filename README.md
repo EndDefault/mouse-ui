@@ -61,6 +61,7 @@ UI 데이터
 - [파일 구조 및 분리 규칙](docs/file_structure_rules.md)
 - [버전 관리 및 체크리스트](docs/version_checklist.md)
 - [변경 기록](docs/change_log.md)
+- [v0 작업 기록](docs/history/v0.md)
 - [커밋 규칙](docs/commit_convention.md)
 - [PR 작성 규칙](docs/pr_convention.md)
 
