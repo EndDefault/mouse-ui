@@ -37,6 +37,8 @@ export function BuilderPage() {
     changeStyleDefaultColor,
     applyStyleDefaultToSelected,
     resetStyleDefaults,
+    alignSelectedComponents,
+    distributeSelectedComponents,
     changeCanvasSize,
     changeCanvasViewport,
     undoProject,
@@ -157,6 +159,8 @@ export function BuilderPage() {
             onChangeStyleDefaultColor={changeStyleDefaultColor}
             onApplyStyleDefaultToSelected={applyStyleDefaultToSelected}
             onResetStyleDefaults={resetStyleDefaults}
+            onAlignSelectedComponents={alignSelectedComponents}
+            onDistributeSelectedComponents={distributeSelectedComponents}
             onPlayEnterPreview={playEnterPreview}
             onToggleStatePreview={toggleStatePreview}
           />

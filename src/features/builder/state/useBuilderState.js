@@ -328,6 +328,54 @@ export function useBuilderState() {
     );
   }
 
+  function alignSelectedComponents(axis) {
+    commitProject((currentProject) => {
+      const targetComponents = getGroupOperationComponents(
+        currentProject.selectedIds,
+        currentProject.components
+      );
+
+      if (targetComponents.length < 2) {
+        return currentProject;
+      }
+
+      const nextComponents = alignComponents(
+        currentProject.components,
+        targetComponents,
+        axis
+      );
+
+      return touchProject({
+        ...currentProject,
+        components: nextComponents
+      });
+    });
+  }
+
+  function distributeSelectedComponents(axis) {
+    commitProject((currentProject) => {
+      const targetComponents = getGroupOperationComponents(
+        currentProject.selectedIds,
+        currentProject.components
+      );
+
+      if (targetComponents.length < 3) {
+        return currentProject;
+      }
+
+      const nextComponents = distributeComponents(
+        currentProject.components,
+        targetComponents,
+        axis
+      );
+
+      return touchProject({
+        ...currentProject,
+        components: nextComponents
+      });
+    });
+  }
+
   function importProject(nextProject) {
     commitProject(normalizeProject(nextProject));
   }
@@ -384,6 +432,8 @@ export function useBuilderState() {
     changeStyleDefaultColor,
     applyStyleDefaultToSelected,
     resetStyleDefaults,
+    alignSelectedComponents,
+    distributeSelectedComponents,
     copyComponents,
     pasteComponents,
     hasClipboard: Boolean(clipboard?.components.length),
@@ -499,6 +549,96 @@ function hasSelectedAncestor(id, selectedIds, components) {
   }
 
   return false;
+}
+
+function getGroupOperationComponents(ids, components) {
+  if (ids.length === 0) {
+    return [];
+  }
+
+  const selectedIds = new Set(ids);
+  const selectedComponents = components.filter(
+    (component) => selectedIds.has(component.id) && !component.locked
+  );
+  const parentId = selectedComponents[0]?.parentId ?? null;
+
+  return selectedComponents.filter(
+    (component) => (component.parentId ?? null) === parentId
+  );
+}
+
+function alignComponents(components, targetComponents, axis) {
+  const targetIds = new Set(targetComponents.map((component) => component.id));
+
+  if (axis === "horizontal") {
+    const centerY = Math.round(
+      targetComponents.reduce(
+        (sum, component) => sum + component.y + component.height / 2,
+        0
+      ) / targetComponents.length
+    );
+
+    return components.map((component) =>
+      targetIds.has(component.id)
+        ? {
+            ...component,
+            y: Math.max(0, Math.round(centerY - component.height / 2))
+          }
+        : component
+    );
+  }
+
+  const centerX = Math.round(
+    targetComponents.reduce(
+      (sum, component) => sum + component.x + component.width / 2,
+      0
+    ) / targetComponents.length
+  );
+
+  return components.map((component) =>
+    targetIds.has(component.id)
+      ? {
+          ...component,
+          x: Math.max(0, Math.round(centerX - component.width / 2))
+        }
+      : component
+  );
+}
+
+function distributeComponents(components, targetComponents, axis) {
+  const sortedComponents = [...targetComponents].sort((a, b) =>
+    axis === "horizontal" ? a.x - b.x : a.y - b.y
+  );
+  const first = sortedComponents[0];
+  const last = sortedComponents.at(-1);
+  const totalSize = sortedComponents.reduce(
+    (sum, component) =>
+      sum + (axis === "horizontal" ? component.width : component.height),
+    0
+  );
+  const start = axis === "horizontal" ? first.x : first.y;
+  const end =
+    axis === "horizontal" ? last.x + last.width : last.y + last.height;
+  const gap = Math.max(0, Math.round((end - start - totalSize) / (sortedComponents.length - 1)));
+  const nextPositions = new Map();
+  let cursor = start;
+
+  sortedComponents.forEach((component) => {
+    nextPositions.set(component.id, cursor);
+    cursor += (axis === "horizontal" ? component.width : component.height) + gap;
+  });
+
+  return components.map((component) => {
+    const nextPosition = nextPositions.get(component.id);
+
+    if (nextPosition == null) {
+      return component;
+    }
+
+    return axis === "horizontal"
+      ? { ...component, x: Math.max(0, Math.round(nextPosition)) }
+      : { ...component, y: Math.max(0, Math.round(nextPosition)) };
+  });
 }
 
 function touchProject(project) {

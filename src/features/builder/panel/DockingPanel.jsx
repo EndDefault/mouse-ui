@@ -2,6 +2,7 @@ import { Rnd } from "react-rnd";
 import { CodePanel } from "../code/CodePanel.jsx";
 import { InspectorPanel } from "../inspector/InspectorPanel.jsx";
 import { BUILDER_PANEL_TABS } from "../workspace/workspaceSettings.js";
+import { GroupPanel } from "./GroupPanel.jsx";
 import { LockedComponentsPanel } from "./LockedComponentsPanel.jsx";
 import { StyleDefaultsPanel } from "./StyleDefaultsPanel.jsx";
 
@@ -9,6 +10,7 @@ const PANEL_TABS = [
   { id: BUILDER_PANEL_TABS.ADJUST, label: "조정" },
   { id: BUILDER_PANEL_TABS.STYLE, label: "꾸미기" },
   { id: BUILDER_PANEL_TABS.ANIMATION, label: "애니메이션" },
+  { id: BUILDER_PANEL_TABS.GROUP, label: "그룹" },
   { id: BUILDER_PANEL_TABS.LOCKED, label: "잠금" },
   { id: BUILDER_PANEL_TABS.THEME, label: "기준" },
   { id: BUILDER_PANEL_TABS.HTML, label: "HTML" }
@@ -33,6 +35,8 @@ export function DockingPanel({
   onChangeStyleDefaultColor,
   onApplyStyleDefaultToSelected,
   onResetStyleDefaults,
+  onAlignSelectedComponents,
+  onDistributeSelectedComponents,
   onPlayEnterPreview,
   onToggleStatePreview
 }) {
@@ -62,6 +66,8 @@ export function DockingPanel({
       onChangeStyleDefaultColor={onChangeStyleDefaultColor}
       onApplyStyleDefaultToSelected={onApplyStyleDefaultToSelected}
       onResetStyleDefaults={onResetStyleDefaults}
+      onAlignSelectedComponents={onAlignSelectedComponents}
+      onDistributeSelectedComponents={onDistributeSelectedComponents}
       onPlayEnterPreview={onPlayEnterPreview}
       onToggleStatePreview={onToggleStatePreview}
     />
@@ -69,10 +75,7 @@ export function DockingPanel({
 
   if (panel.isDocked) {
     return (
-      <div
-        className="docking-panel is-docked"
-        style={{ width: panel.width }}
-      >
+      <div className="docking-panel is-docked" style={{ width: panel.width }}>
         {content}
       </div>
     );
@@ -122,6 +125,8 @@ function PanelShell({
   onChangeStyleDefaultColor,
   onApplyStyleDefaultToSelected,
   onResetStyleDefaults,
+  onAlignSelectedComponents,
+  onDistributeSelectedComponents,
   onPlayEnterPreview,
   onToggleStatePreview
 }) {
@@ -133,10 +138,7 @@ function PanelShell({
           <span>{panel.isDocked ? "오른쪽 고정" : "자유 이동"}</span>
         </div>
         <div className="docking-panel-actions">
-          <button
-            type="button"
-            onClick={onToggleDocking}
-          >
+          <button type="button" onClick={onToggleDocking}>
             {panel.isDocked ? "떼기" : "붙이기"}
           </button>
           <button type="button" onClick={onResetPanel}>
@@ -171,6 +173,19 @@ function PanelShell({
           <LockedComponentsPanel
             components={components}
             onUnlock={(componentId) => onSetComponentLocked(componentId, false)}
+          />
+        ) : panel.activeTab === BUILDER_PANEL_TABS.GROUP ? (
+          <GroupPanel
+            components={components}
+            selectedIds={selectedIds}
+            onAlignHorizontal={() => onAlignSelectedComponents("horizontal")}
+            onAlignVertical={() => onAlignSelectedComponents("vertical")}
+            onDistributeHorizontal={() =>
+              onDistributeSelectedComponents("horizontal")
+            }
+            onDistributeVertical={() =>
+              onDistributeSelectedComponents("vertical")
+            }
           />
         ) : panel.activeTab === BUILDER_PANEL_TABS.THEME ? (
           <StyleDefaultsPanel
