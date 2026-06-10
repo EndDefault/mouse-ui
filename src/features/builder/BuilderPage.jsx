@@ -49,6 +49,7 @@ export function BuilderPage() {
           canvas={canvas}
           components={components}
           selectedId={selectedId}
+          onAddComponent={addComponent}
           onSelectComponent={selectComponent}
           onChangeComponent={changeComponent}
           onChangeViewport={changeCanvasViewport}

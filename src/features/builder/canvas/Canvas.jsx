@@ -4,6 +4,7 @@ export function Canvas({
   canvas,
   components,
   selectedId,
+  onAddComponent,
   onSelectComponent,
   onChangeComponent,
   onChangeViewport
@@ -22,6 +23,7 @@ export function Canvas({
           canvas={canvas}
           components={components}
           selectedId={selectedId}
+          onAddComponent={onAddComponent}
           onSelectComponent={onSelectComponent}
           onChangeComponent={onChangeComponent}
           onChangeViewport={onChangeViewport}

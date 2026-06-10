@@ -2,6 +2,8 @@ import { Rnd } from "react-rnd";
 import { COMPONENT_TYPES } from "../model/componentTypes.js";
 import { BoxCanvasItem } from "./renderers/BoxCanvasItem.jsx";
 import { ButtonCanvasItem } from "./renderers/ButtonCanvasItem.jsx";
+import { ContainerCanvasItem } from "./renderers/ContainerCanvasItem.jsx";
+import { ImageCanvasItem } from "./renderers/ImageCanvasItem.jsx";
 import { InputCanvasItem } from "./renderers/InputCanvasItem.jsx";
 import { TextCanvasItem } from "./renderers/TextCanvasItem.jsx";
 
@@ -18,18 +20,46 @@ const RESIZE_HANDLE_STYLES = {
 
 export function CanvasItemFrame({
   component,
+  childrenByParent = new Map(),
   isSelected,
   scale = 1,
+  selectedId,
+  onOpenContextMenu,
   onSelect,
   onChange
 }) {
-  const className = isSelected
-    ? "canvas-item-frame is-selected"
-    : "canvas-item-frame";
+  const isContainer = component.type === COMPONENT_TYPES.CONTAINER;
+  const childComponents = childrenByParent.get(component.id) ?? [];
+  const className = [
+    "canvas-item-frame",
+    isContainer ? "is-container" : "",
+    isSelected ? "is-selected" : ""
+  ]
+    .filter(Boolean)
+    .join(" ");
 
   function handleClick(event) {
     event.stopPropagation();
     onSelect(component.id);
+  }
+
+  function handleContextMenu(event) {
+    if (!isContainer) {
+      return;
+    }
+
+    const rect = event.currentTarget.getBoundingClientRect();
+
+    event.preventDefault();
+    event.stopPropagation();
+    onSelect(component.id);
+    onOpenContextMenu({
+      componentId: component.id,
+      clientX: event.clientX,
+      clientY: event.clientY,
+      localX: (event.clientX - rect.left) / scale,
+      localY: (event.clientY - rect.top) / scale
+    });
   }
 
   function handleDragStop(_event, data) {
@@ -59,6 +89,7 @@ export function CanvasItemFrame({
       scale={scale}
       size={{ width: component.width, height: component.height }}
       onClick={handleClick}
+      onContextMenu={handleContextMenu}
       onDragStop={handleDragStop}
       onResizeStop={handleResizeStop}
     >
@@ -73,6 +104,27 @@ export function CanvasItemFrame({
       ) : null}
       {component.type === COMPONENT_TYPES.BOX ? (
         <BoxCanvasItem component={component} />
+      ) : null}
+      {component.type === COMPONENT_TYPES.CONTAINER ? (
+        <>
+          <ContainerCanvasItem component={component} />
+          {childComponents.map((childComponent) => (
+            <CanvasItemFrame
+              key={childComponent.id}
+              component={childComponent}
+              childrenByParent={childrenByParent}
+              isSelected={childComponent.id === selectedId}
+              scale={scale}
+              selectedId={selectedId}
+              onOpenContextMenu={onOpenContextMenu}
+              onSelect={onSelect}
+              onChange={onChange}
+            />
+          ))}
+        </>
+      ) : null}
+      {component.type === COMPONENT_TYPES.IMAGE ? (
+        <ImageCanvasItem component={component} />
       ) : null}
     </Rnd>
   );

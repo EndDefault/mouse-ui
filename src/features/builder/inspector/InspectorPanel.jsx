@@ -2,6 +2,7 @@ import { COMPONENT_TYPES } from "../model/componentTypes.js";
 import { getSolidBackgroundColor } from "../model/styleValues.js";
 import { EmptyInspector } from "./EmptyInspector.jsx";
 import { ColorPropertyGroup } from "./fields/ColorPropertyGroup.jsx";
+import { ImagePropertyGroup } from "./fields/ImagePropertyGroup.jsx";
 import { InputPropertyGroup } from "./fields/InputPropertyGroup.jsx";
 import { PositionPropertyGroup } from "./fields/PositionPropertyGroup.jsx";
 import { RadiusProperty } from "./fields/RadiusProperty.jsx";
@@ -56,6 +57,10 @@ export function InspectorPanel({ component, onChangeComponent }) {
 
       {component.type === COMPONENT_TYPES.INPUT ? (
         <InputPropertyGroup component={component} onChange={updateProps} />
+      ) : null}
+
+      {component.type === COMPONENT_TYPES.IMAGE ? (
+        <ImagePropertyGroup component={component} onChange={updateProps} />
       ) : null}
 
       <PositionPropertyGroup

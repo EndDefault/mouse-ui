@@ -1,0 +1,57 @@
+import { useEffect, useState } from "react";
+
+export function useCanvasContextMenu({ onAddComponent }) {
+  const [menu, setMenu] = useState(null);
+
+  useEffect(() => {
+    if (!menu) {
+      return undefined;
+    }
+
+    function handleWindowClick() {
+      closeMenu();
+    }
+
+    function handleKeyDown(event) {
+      if (event.key === "Escape") {
+        closeMenu();
+      }
+    }
+
+    window.addEventListener("click", handleWindowClick);
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      window.removeEventListener("click", handleWindowClick);
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [menu]);
+
+  function openMenu(nextMenu) {
+    setMenu(nextMenu);
+  }
+
+  function closeMenu() {
+    setMenu(null);
+  }
+
+  function addComponentToContainer(type) {
+    if (!menu) {
+      return;
+    }
+
+    onAddComponent(type, {
+      parentId: menu.componentId,
+      x: Math.max(8, Math.round(menu.localX)),
+      y: Math.max(8, Math.round(menu.localY))
+    });
+    closeMenu();
+  }
+
+  return {
+    menu,
+    openMenu,
+    closeMenu,
+    addComponentToContainer
+  };
+}

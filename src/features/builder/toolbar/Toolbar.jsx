@@ -1,6 +1,7 @@
 import { ButtonTool } from "./ButtonTool.jsx";
 import { BoxTool } from "./BoxTool.jsx";
 import { CanvasSizeControl } from "./CanvasSizeControl.jsx";
+import { ContainerTool } from "./ContainerTool.jsx";
 import { InputTool } from "./InputTool.jsx";
 import { ProjectJsonControls } from "./ProjectJsonControls.jsx";
 import { TextTool } from "./TextTool.jsx";
@@ -20,6 +21,7 @@ export function Toolbar({
         <TextTool onAdd={onAddComponent} />
         <InputTool onAdd={onAddComponent} />
         <BoxTool onAdd={onAddComponent} />
+        <ContainerTool onAdd={onAddComponent} />
       </div>
       <CanvasSizeControl
         canvas={canvas}
