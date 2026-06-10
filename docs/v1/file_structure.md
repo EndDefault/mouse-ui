@@ -24,7 +24,6 @@ src/features/builder/
       ButtonRenderer.jsx
       TextRenderer.jsx
       InputRenderer.jsx
-      BoxRenderer.jsx
       ContainerRenderer.jsx
 
   components/
@@ -32,7 +31,6 @@ src/features/builder/
       buttonDefinition.js
       textDefinition.js
       inputDefinition.js
-      boxDefinition.js
       containerDefinition.js
     createComponent.js
 

@@ -4,7 +4,8 @@ const MENU_ITEMS = [
   { type: COMPONENT_TYPES.BUTTON, label: "버튼 추가" },
   { type: COMPONENT_TYPES.TEXT, label: "텍스트 추가" },
   { type: COMPONENT_TYPES.INPUT, label: "input 추가" },
-  { type: COMPONENT_TYPES.IMAGE, label: "이미지 추가" }
+  { type: COMPONENT_TYPES.IMAGE, label: "이미지 추가" },
+  { type: COMPONENT_TYPES.CONTAINER, label: "컨테이너 추가" }
 ];
 
 export function CanvasContextMenu({ menu, onAdd, onDelete, onClose }) {

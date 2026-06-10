@@ -2,10 +2,16 @@ import {
   DEFAULT_CANVAS_PRESET_ID,
   getCanvasPreset
 } from "../model/canvasPresets.js";
-import { COMPONENT_TYPES } from "../model/componentTypes.js";
+import {
+  COMPONENT_TYPES,
+  LEGACY_COMPONENT_TYPES
+} from "../model/componentTypes.js";
 
 const SCHEMA_VERSION = 1;
-const SUPPORTED_TYPES = new Set(Object.values(COMPONENT_TYPES));
+const SUPPORTED_TYPES = new Set([
+  ...Object.values(COMPONENT_TYPES),
+  ...Object.values(LEGACY_COMPONENT_TYPES)
+]);
 const INTERACTION_EVENTS = new Set(["hover", "click", "enter", "stateChange"]);
 const ANIMATION_TYPES = new Set(["move", "color", "flyOut", "scale", "opacity"]);
 
@@ -110,40 +116,49 @@ function normalizeComponent(component, index) {
   if (!SUPPORTED_TYPES.has(component?.type)) {
     return null;
   }
+  const type = normalizeComponentType(component.type);
 
   const common = {
-    id: readString(component.id, `${component.type}-${index + 1}`),
-    type: component.type,
+    id: readString(component.id, `${type}-${index + 1}`),
+    type,
     parentId: readNullableString(component.parentId),
-    name: readString(component.name, getDefaultName(component.type)),
+    name: readString(component.name, getDefaultName(type)),
     x: readNumber(component.x, 96),
     y: readNumber(component.y, 80),
     width: readNumber(component.width, 120, 32),
     height: readNumber(component.height, 40, 24),
-    props: normalizeProps(component),
-    style: normalizeStyle(component),
+    props: normalizeProps(component, type),
+    style: normalizeStyle(component, type),
     interactions: normalizeInteractions(component.interactions)
   };
 
   return common;
 }
 
-function normalizeProps(component) {
+function normalizeComponentType(type) {
+  if (type === LEGACY_COMPONENT_TYPES.BOX) {
+    return COMPONENT_TYPES.CONTAINER;
+  }
+
+  return type;
+}
+
+function normalizeProps(component, type) {
   const props = readObject(component.props);
 
-  if (component.type === COMPONENT_TYPES.BUTTON) {
+  if (type === COMPONENT_TYPES.BUTTON) {
     return {
       text: readString(props.text ?? component.text, "버튼")
     };
   }
 
-  if (component.type === COMPONENT_TYPES.TEXT) {
+  if (type === COMPONENT_TYPES.TEXT) {
     return {
       text: readString(props.text ?? component.text, "텍스트")
     };
   }
 
-  if (component.type === COMPONENT_TYPES.INPUT) {
+  if (type === COMPONENT_TYPES.INPUT) {
     return {
       label: readString(props.label ?? component.label, "이메일"),
       placeholder: readString(
@@ -154,7 +169,7 @@ function normalizeProps(component) {
     };
   }
 
-  if (component.type === COMPONENT_TYPES.IMAGE) {
+  if (type === COMPONENT_TYPES.IMAGE) {
     return {
       src: readString(props.src ?? component.src, ""),
       alt: readString(props.alt ?? component.alt, "이미지")
@@ -164,24 +179,24 @@ function normalizeProps(component) {
   return {};
 }
 
-function normalizeStyle(component) {
+function normalizeStyle(component, type) {
   const style = readObject(component.style);
 
-  if (component.type === COMPONENT_TYPES.TEXT) {
+  if (type === COMPONENT_TYPES.TEXT) {
     return {
       color: readString(style.color, "#24211f"),
       fontSize: readNumber(style.fontSize, 18, 8)
     };
   }
 
-  if (component.type === COMPONENT_TYPES.BOX) {
+  if (component.type === LEGACY_COMPONENT_TYPES.BOX) {
     return {
       background: normalizeBackground(style, "#f0b35a"),
       borderRadius: readNumber(style.borderRadius, 12)
     };
   }
 
-  if (component.type === COMPONENT_TYPES.CONTAINER) {
+  if (type === COMPONENT_TYPES.CONTAINER) {
     return {
       background: normalizeBackground(style, "#ffffff"),
       color: readString(style.color, "#24211f"),
@@ -189,7 +204,7 @@ function normalizeStyle(component) {
     };
   }
 
-  if (component.type === COMPONENT_TYPES.IMAGE) {
+  if (type === COMPONENT_TYPES.IMAGE) {
     return {
       background: normalizeBackground(style, "#e8f2ef"),
       borderRadius: readNumber(style.borderRadius, 10)
@@ -199,11 +214,11 @@ function normalizeStyle(component) {
   return {
     background: normalizeBackground(
       style,
-      component.type === COMPONENT_TYPES.INPUT ? "#ffffff" : "#2f9e8f"
+      type === COMPONENT_TYPES.INPUT ? "#ffffff" : "#2f9e8f"
     ),
     color: readString(
       style.color,
-      component.type === COMPONENT_TYPES.INPUT ? "#24211f" : "#ffffff"
+      type === COMPONENT_TYPES.INPUT ? "#24211f" : "#ffffff"
     ),
     borderRadius: readNumber(style.borderRadius, 8)
   };
@@ -273,10 +288,6 @@ function getDefaultName(type) {
 
   if (type === COMPONENT_TYPES.INPUT) {
     return "Input";
-  }
-
-  if (type === COMPONENT_TYPES.BOX) {
-    return "Box";
   }
 
   if (type === COMPONENT_TYPES.CONTAINER) {

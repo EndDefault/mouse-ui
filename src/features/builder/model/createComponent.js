@@ -13,10 +13,6 @@ export function createComponent(type, order, options = {}) {
     return applyCreateOptions(createInputComponent(order), options);
   }
 
-  if (type === COMPONENT_TYPES.BOX) {
-    return applyCreateOptions(createBoxComponent(order), options);
-  }
-
   if (type === COMPONENT_TYPES.CONTAINER) {
     return applyCreateOptions(createContainerComponent(order), options);
   }
@@ -34,31 +30,6 @@ function applyCreateOptions(component, options) {
     parentId: options.parentId ?? component.parentId,
     x: options.x ?? component.x,
     y: options.y ?? component.y
-  };
-}
-
-function createBoxComponent(order) {
-  const offset = (order - 1) * 16;
-
-  return {
-    id: `box-${order}`,
-    type: COMPONENT_TYPES.BOX,
-    parentId: null,
-    name: "Box",
-    x: 144 + offset,
-    y: 136 + offset,
-    width: 180,
-    height: 100,
-    props: {},
-    style: {
-      background: {
-        type: "solid",
-        color: "#f0b35a",
-        gradient: null
-      },
-      borderRadius: 12
-    },
-    interactions: []
   };
 }
 
