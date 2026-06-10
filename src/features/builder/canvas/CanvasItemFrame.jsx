@@ -60,12 +60,11 @@ export function CanvasItemFrame({
     .join(" ");
 
   function handleClick(event) {
-    event.stopPropagation();
-
     if (component.locked) {
       return;
     }
 
+    event.stopPropagation();
     onSelect(component.id, { toggle: event.shiftKey });
   }
 
@@ -89,6 +88,10 @@ export function CanvasItemFrame({
   }
 
   function handleMouseDown(event) {
+    if (component.locked) {
+      return;
+    }
+
     event.stopPropagation();
   }
 
