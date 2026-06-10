@@ -1,6 +1,7 @@
 import { COMPONENT_TYPES } from "../model/componentTypes.js";
 import { getBackgroundCss } from "../model/styleValues.js";
 import { escapeHtml } from "./escapeHtml.js";
+import { getAnimationClassName } from "./renderAnimations.js";
 
 export function generateHtmlForComponent(component, components = [], depth = 1) {
   if (component.type === COMPONENT_TYPES.BUTTON) {
@@ -44,7 +45,7 @@ function generateContainerHtml(component, components, depth) {
   const indent = getIndent(depth);
   const closeIndent = children ? `\n${indent}` : "";
 
-  return `${indent}<div style="${style}">${children ? `\n${children}` : ""}${closeIndent}</div>`;
+  return `${indent}<div ${renderAttributes(component, style)}>${children ? `\n${children}` : ""}${closeIndent}</div>`;
 }
 
 function generateBoxHtml(component, depth) {
@@ -53,7 +54,7 @@ function generateBoxHtml(component, depth) {
     `border-radius:${component.style.borderRadius}px`
   ]);
 
-  return `${getIndent(depth)}<div style="${style}"></div>`;
+  return `${getIndent(depth)}<div ${renderAttributes(component, style)}></div>`;
 }
 
 function generateImageHtml(component, depth) {
@@ -64,10 +65,10 @@ function generateImageHtml(component, depth) {
   ]);
 
   if (!component.props.src) {
-    return `${getIndent(depth)}<div role="img" aria-label="${escapeHtml(component.props.alt)}" style="${style}"></div>`;
+    return `${getIndent(depth)}<div role="img" aria-label="${escapeHtml(component.props.alt)}" ${renderAttributes(component, style)}></div>`;
   }
 
-  return `${getIndent(depth)}<img src="${escapeHtml(component.props.src)}" alt="${escapeHtml(component.props.alt)}" style="${style}" />`;
+  return `${getIndent(depth)}<img src="${escapeHtml(component.props.src)}" alt="${escapeHtml(component.props.alt)}" ${renderAttributes(component, style)} />`;
 }
 
 function generateInputHtml(component, depth) {
@@ -90,7 +91,7 @@ function generateInputHtml(component, depth) {
   const indent = getIndent(depth);
 
   return [
-    `${indent}<label style="${wrapperStyle}">`,
+    `${indent}<label ${renderAttributes(component, wrapperStyle)}>`,
     `${indent}  ${escapeHtml(component.props.label)}`,
     `${indent}  <input type="${escapeHtml(component.props.inputType)}" placeholder="${escapeHtml(component.props.placeholder)}" style="${inputStyle}" />`,
     `${indent}</label>`
@@ -107,7 +108,7 @@ function generateTextHtml(component, depth) {
     "align-items:center"
   ]);
 
-  return `${getIndent(depth)}<p style="${style}">${escapeHtml(component.props.text)}</p>`;
+  return `${getIndent(depth)}<p ${renderAttributes(component, style)}>${escapeHtml(component.props.text)}</p>`;
 }
 
 function generateButtonHtml(component, depth) {
@@ -120,7 +121,7 @@ function generateButtonHtml(component, depth) {
     "cursor:pointer"
   ]);
 
-  return `${getIndent(depth)}<button style="${style}">\n${getIndent(depth + 1)}${escapeHtml(component.props.text)}\n${getIndent(depth)}</button>`;
+  return `${getIndent(depth)}<button ${renderAttributes(component, style)}>\n${getIndent(depth + 1)}${escapeHtml(component.props.text)}\n${getIndent(depth)}</button>`;
 }
 
 function buildBaseStyle(component, declarations = []) {
@@ -136,4 +137,14 @@ function buildBaseStyle(component, declarations = []) {
 
 function getIndent(depth) {
   return "  ".repeat(depth);
+}
+
+function renderAttributes(component, style) {
+  const className = getAnimationClassName(component);
+
+  if (!className) {
+    return `style="${style}"`;
+  }
+
+  return `class="${className}" style="${style}"`;
 }

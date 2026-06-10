@@ -407,6 +407,26 @@
   gap: 10px;
 }
 
+.animation-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: #514b44;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.animation-toggle input {
+  width: 16px;
+  height: 16px;
+}
+
+.animation-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 10px;
+}
+
 .builder-code-panel {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);

@@ -1,4 +1,5 @@
 import { generateHtmlForComponent } from "./generateHtmlForComponent.js";
+import { renderAnimations } from "./renderAnimations.js";
 
 export function generateHtml(project) {
   if (project.components.length === 0) {
@@ -15,6 +16,8 @@ export function generateHtml(project) {
     `height:${project.canvas.height}px`,
     "overflow:hidden"
   ].join("; ");
+  const animations = renderAnimations(project.components);
+  const animationStyle = animations ? `<style>\n${animations}\n</style>\n` : "";
 
-  return `<div style="${style}">\n${children}\n</div>`;
+  return `${animationStyle}<div style="${style}">\n${children}\n</div>`;
 }

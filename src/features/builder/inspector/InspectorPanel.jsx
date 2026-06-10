@@ -1,5 +1,6 @@
 import { COMPONENT_TYPES } from "../model/componentTypes.js";
 import { getSolidBackgroundColor } from "../model/styleValues.js";
+import { AnimationEditor } from "./AnimationEditor.jsx";
 import { EmptyInspector } from "./EmptyInspector.jsx";
 import { ColorPropertyGroup } from "./fields/ColorPropertyGroup.jsx";
 import { GradientEditor } from "./GradientEditor.jsx";
@@ -26,6 +27,10 @@ export function InspectorPanel({ component, onChangeComponent }) {
 
   function updateProps(propsPatch) {
     updateComponent({ props: propsPatch });
+  }
+
+  function updateInteractions(interactions) {
+    updateComponent({ interactions });
   }
 
   return (
@@ -92,6 +97,11 @@ export function InspectorPanel({ component, onChangeComponent }) {
           />
         </>
       ) : null}
+
+      <AnimationEditor
+        component={component}
+        onChange={updateInteractions}
+      />
     </section>
   );
 }

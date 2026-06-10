@@ -1,0 +1,237 @@
+import { PropertyRow } from "./fields/PropertyRow.jsx";
+import { readNumberInput } from "./fields/readNumberInput.js";
+
+const EVENTS = [
+  { value: "hover", label: "hover" },
+  { value: "click", label: "클릭" },
+  { value: "enter", label: "페이지 진입" },
+  { value: "stateChange", label: "상태 변경" }
+];
+
+const ANIMATIONS = [
+  { value: "move", label: "이동" },
+  { value: "color", label: "색상 변경" },
+  { value: "flyOut", label: "날아가기" },
+  { value: "scale", label: "크기 변경" },
+  { value: "opacity", label: "투명도 변경" }
+];
+
+const EASINGS = ["ease", "ease-in", "ease-out", "ease-in-out", "linear"];
+
+export function AnimationEditor({ component, onChange }) {
+  const interaction = component.interactions[0] ?? createDefaultInteraction(component.id);
+  const animation = interaction.animation;
+  const isEnabled = component.interactions.length > 0;
+
+  function changeEnabled(event) {
+    onChange(event.target.checked ? [interaction] : []);
+  }
+
+  function changeInteraction(patch) {
+    onChange([
+      {
+        ...interaction,
+        ...patch
+      }
+    ]);
+  }
+
+  function changeAnimation(animationPatch) {
+    changeInteraction({
+      animation: {
+        ...animation,
+        ...animationPatch
+      }
+    });
+  }
+
+  function changeTo(toPatch) {
+    changeAnimation({
+      to: {
+        ...animation.to,
+        ...toPatch
+      }
+    });
+  }
+
+  return (
+    <section className="property-group animation-editor">
+      <h3>애니메이션</h3>
+      <label className="animation-toggle">
+        <input type="checkbox" checked={isEnabled} onChange={changeEnabled} />
+        <span>사용</span>
+      </label>
+      {isEnabled ? (
+        <>
+          <PropertyRow label="이벤트">
+            <select
+              value={interaction.event}
+              onChange={(event) =>
+                changeInteraction({ event: event.target.value })
+              }
+            >
+              {EVENTS.map((item) => (
+                <option key={item.value} value={item.value}>
+                  {item.label}
+                </option>
+              ))}
+            </select>
+          </PropertyRow>
+          <PropertyRow label="효과">
+            <select
+              value={animation.type}
+              onChange={(event) =>
+                changeAnimation({
+                  type: event.target.value,
+                  to: getDefaultTo(event.target.value)
+                })
+              }
+            >
+              {ANIMATIONS.map((item) => (
+                <option key={item.value} value={item.value}>
+                  {item.label}
+                </option>
+              ))}
+            </select>
+          </PropertyRow>
+          <div className="animation-grid">
+            <PropertyRow label="시간">
+              <input
+                min="0"
+                type="number"
+                value={animation.duration}
+                onChange={(event) =>
+                  changeAnimation({
+                    duration: readNumberInput(event, animation.duration, 0)
+                  })
+                }
+              />
+            </PropertyRow>
+            <PropertyRow label="가속">
+              <select
+                value={animation.easing}
+                onChange={(event) =>
+                  changeAnimation({ easing: event.target.value })
+                }
+              >
+                {EASINGS.map((easing) => (
+                  <option key={easing} value={easing}>
+                    {easing}
+                  </option>
+                ))}
+              </select>
+            </PropertyRow>
+          </div>
+          <AnimationTargetFields animation={animation} onChange={changeTo} />
+        </>
+      ) : null}
+    </section>
+  );
+}
+
+function AnimationTargetFields({ animation, onChange }) {
+  if (animation.type === "move" || animation.type === "flyOut") {
+    return (
+      <div className="animation-grid">
+        <PropertyRow label="X">
+          <input
+            type="number"
+            value={animation.to.x ?? 20}
+            onChange={(event) =>
+              onChange({
+                x: readNumberInput(event, animation.to.x ?? 20, -10000)
+              })
+            }
+          />
+        </PropertyRow>
+        <PropertyRow label="Y">
+          <input
+            type="number"
+            value={animation.to.y ?? 0}
+            onChange={(event) =>
+              onChange({
+                y: readNumberInput(event, animation.to.y ?? 0, -10000)
+              })
+            }
+          />
+        </PropertyRow>
+      </div>
+    );
+  }
+
+  if (animation.type === "color") {
+    return (
+      <PropertyRow label="색상">
+        <input
+          type="color"
+          value={animation.to.color ?? "#f06f47"}
+          onChange={(event) => onChange({ color: event.target.value })}
+        />
+      </PropertyRow>
+    );
+  }
+
+  if (animation.type === "scale") {
+    return (
+      <PropertyRow label="배율">
+        <input
+          min="0.1"
+          step="0.1"
+          type="number"
+          value={animation.to.scale ?? 1.08}
+          onChange={(event) =>
+            onChange({ scale: Number(event.target.value) || 1 })
+          }
+        />
+      </PropertyRow>
+    );
+  }
+
+  return (
+    <PropertyRow label="투명도">
+      <input
+        max="1"
+        min="0"
+        step="0.1"
+        type="number"
+        value={animation.to.opacity ?? 0.35}
+        onChange={(event) =>
+          onChange({ opacity: Number(event.target.value) || 0 })
+        }
+      />
+    </PropertyRow>
+  );
+}
+
+function createDefaultInteraction(componentId) {
+  return {
+    id: `${componentId}-interaction-1`,
+    event: "hover",
+    animation: {
+      type: "move",
+      to: getDefaultTo("move"),
+      duration: 300,
+      easing: "ease"
+    }
+  };
+}
+
+function getDefaultTo(type) {
+  if (type === "move") {
+    return { x: 20, y: 0 };
+  }
+
+  if (type === "color") {
+    return { color: "#f06f47" };
+  }
+
+  if (type === "flyOut") {
+    return { x: 80, y: -20 };
+  }
+
+  if (type === "scale") {
+    return { scale: 1.08 };
+  }
+
+  return { opacity: 0.35 };
+}
