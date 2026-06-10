@@ -55,6 +55,7 @@ UI 데이터
 ## 문서
 
 - [docs 구조 안내](docs/README.md)
+- [v1 기획 문서](docs/v1/README.md)
 - [작업 흐름 설명서](docs/workflow.md)
 - [제품 기획서](docs/product_plan.md)
 - [개발 방향 및 규칙](docs/development_rules.md)
