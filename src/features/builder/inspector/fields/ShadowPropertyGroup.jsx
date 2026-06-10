@@ -1,6 +1,6 @@
 import { DEFAULT_SHADOW } from "../../model/styleValues.js";
+import { NumberInput } from "./NumberInput.jsx";
 import { PropertyRow } from "./PropertyRow.jsx";
-import { readNumberInput } from "./readNumberInput.js";
 
 export function ShadowPropertyGroup({ shadow, onChange }) {
   const value = {
@@ -32,51 +32,35 @@ export function ShadowPropertyGroup({ shadow, onChange }) {
         <>
           <div className="property-grid">
             <PropertyRow label="X">
-              <input
+              <NumberInput
                 min="-100"
                 max="100"
-                type="number"
                 value={value.x}
-                onChange={(event) =>
-                  changeShadow({ x: readNumberInput(event, value.x, -100) })
-                }
+                onChange={(x) => changeShadow({ x })}
               />
             </PropertyRow>
             <PropertyRow label="Y">
-              <input
+              <NumberInput
                 min="-100"
                 max="100"
-                type="number"
                 value={value.y}
-                onChange={(event) =>
-                  changeShadow({ y: readNumberInput(event, value.y, -100) })
-                }
+                onChange={(y) => changeShadow({ y })}
               />
             </PropertyRow>
             <PropertyRow label="Blur">
-              <input
+              <NumberInput
                 min="0"
                 max="160"
-                type="number"
                 value={value.blur}
-                onChange={(event) =>
-                  changeShadow({
-                    blur: readNumberInput(event, value.blur, 0)
-                  })
-                }
+                onChange={(blur) => changeShadow({ blur })}
               />
             </PropertyRow>
             <PropertyRow label="Spread">
-              <input
+              <NumberInput
                 min="-100"
                 max="100"
-                type="number"
                 value={value.spread}
-                onChange={(event) =>
-                  changeShadow({
-                    spread: readNumberInput(event, value.spread, -100)
-                  })
-                }
+                onChange={(spread) => changeShadow({ spread })}
               />
             </PropertyRow>
             <PropertyRow label="색상">

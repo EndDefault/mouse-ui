@@ -1,6 +1,6 @@
 import { DEFAULT_BORDER } from "../../model/styleValues.js";
+import { NumberInput } from "./NumberInput.jsx";
 import { PropertyRow } from "./PropertyRow.jsx";
-import { readNumberInput } from "./readNumberInput.js";
 
 const BORDER_STYLES = [
   { value: "solid", label: "실선" },
@@ -44,14 +44,11 @@ export function BorderPropertyGroup({ border, onChange }) {
             />
           </PropertyRow>
           <PropertyRow label="두께">
-            <input
+            <NumberInput
               min="0"
               max="24"
-              type="number"
               value={value.width}
-              onChange={(event) =>
-                changeBorder({ width: readNumberInput(event, value.width, 0) })
-              }
+              onChange={(width) => changeBorder({ width })}
             />
           </PropertyRow>
           <PropertyRow label="스타일">

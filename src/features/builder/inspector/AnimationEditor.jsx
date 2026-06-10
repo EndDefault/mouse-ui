@@ -1,5 +1,5 @@
+import { NumberInput } from "./fields/NumberInput.jsx";
 import { PropertyRow } from "./fields/PropertyRow.jsx";
-import { readNumberInput } from "./fields/readNumberInput.js";
 
 const EVENTS = [
   { value: "hover", label: "hover" },
@@ -102,15 +102,10 @@ export function AnimationEditor({
           </PropertyRow>
           <div className="animation-grid">
             <PropertyRow label="시간">
-              <input
+              <NumberInput
                 min="0"
-                type="number"
                 value={animation.duration}
-                onChange={(event) =>
-                  changeAnimation({
-                    duration: readNumberInput(event, animation.duration, 0)
-                  })
-                }
+                onChange={(duration) => changeAnimation({ duration })}
               />
             </PropertyRow>
             <PropertyRow label="가속">
@@ -155,25 +150,17 @@ function AnimationTargetFields({ animation, onChange }) {
     return (
       <div className="animation-grid">
         <PropertyRow label="X">
-          <input
-            type="number"
+          <NumberInput
+            min="-10000"
             value={animation.to.x ?? 20}
-            onChange={(event) =>
-              onChange({
-                x: readNumberInput(event, animation.to.x ?? 20, -10000)
-              })
-            }
+            onChange={(x) => onChange({ x })}
           />
         </PropertyRow>
         <PropertyRow label="Y">
-          <input
-            type="number"
+          <NumberInput
+            min="-10000"
             value={animation.to.y ?? 0}
-            onChange={(event) =>
-              onChange({
-                y: readNumberInput(event, animation.to.y ?? 0, -10000)
-              })
-            }
+            onChange={(y) => onChange({ y })}
           />
         </PropertyRow>
       </div>
@@ -195,14 +182,11 @@ function AnimationTargetFields({ animation, onChange }) {
   if (animation.type === "scale") {
     return (
       <PropertyRow label="배율">
-        <input
+        <NumberInput
           min="0.1"
           step="0.1"
-          type="number"
           value={animation.to.scale ?? 1.08}
-          onChange={(event) =>
-            onChange({ scale: Number(event.target.value) || 1 })
-          }
+          onChange={(scale) => onChange({ scale })}
         />
       </PropertyRow>
     );
@@ -210,15 +194,12 @@ function AnimationTargetFields({ animation, onChange }) {
 
   return (
     <PropertyRow label="투명도">
-      <input
+      <NumberInput
         max="1"
         min="0"
         step="0.1"
-        type="number"
         value={animation.to.opacity ?? 0.35}
-        onChange={(event) =>
-          onChange({ opacity: Number(event.target.value) || 0 })
-        }
+        onChange={(opacity) => onChange({ opacity })}
       />
     </PropertyRow>
   );

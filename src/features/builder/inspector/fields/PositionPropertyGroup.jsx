@@ -1,5 +1,5 @@
 import { PropertyRow } from "./PropertyRow.jsx";
-import { readNumberInput } from "./readNumberInput.js";
+import { NumberInput } from "./NumberInput.jsx";
 
 export function PositionPropertyGroup({ x, y, onChange }) {
   return (
@@ -7,19 +7,17 @@ export function PositionPropertyGroup({ x, y, onChange }) {
       <h3>위치</h3>
       <div className="property-grid">
         <PropertyRow label="X">
-          <input
+          <NumberInput
             min="0"
-            type="number"
             value={x}
-            onChange={(event) => onChange({ x: readNumberInput(event, x) })}
+            onChange={(nextX) => onChange({ x: nextX })}
           />
         </PropertyRow>
         <PropertyRow label="Y">
-          <input
+          <NumberInput
             min="0"
-            type="number"
             value={y}
-            onChange={(event) => onChange({ y: readNumberInput(event, y) })}
+            onChange={(nextY) => onChange({ y: nextY })}
           />
         </PropertyRow>
       </div>

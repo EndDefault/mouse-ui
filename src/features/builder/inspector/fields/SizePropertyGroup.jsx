@@ -1,5 +1,5 @@
 import { PropertyRow } from "./PropertyRow.jsx";
-import { readNumberInput } from "./readNumberInput.js";
+import { NumberInput } from "./NumberInput.jsx";
 
 export function SizePropertyGroup({ width, height, onChange }) {
   return (
@@ -7,23 +7,17 @@ export function SizePropertyGroup({ width, height, onChange }) {
       <h3>크기</h3>
       <div className="property-grid">
         <PropertyRow label="W">
-          <input
+          <NumberInput
             min="64"
-            type="number"
             value={width}
-            onChange={(event) =>
-              onChange({ width: readNumberInput(event, width, 64) })
-            }
+            onChange={(nextWidth) => onChange({ width: nextWidth })}
           />
         </PropertyRow>
         <PropertyRow label="H">
-          <input
+          <NumberInput
             min="32"
-            type="number"
             value={height}
-            onChange={(event) =>
-              onChange({ height: readNumberInput(event, height, 32) })
-            }
+            onChange={(nextHeight) => onChange({ height: nextHeight })}
           />
         </PropertyRow>
       </div>
