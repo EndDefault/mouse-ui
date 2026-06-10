@@ -1,6 +1,11 @@
 import { PropertyRow } from "./PropertyRow.jsx";
 
-export function ColorPropertyGroup({ backgroundColor, color, onChange }) {
+export function ColorPropertyGroup({
+  backgroundColor,
+  color,
+  showTextColor = true,
+  onChange
+}) {
   return (
     <section className="property-group">
       <h3>색상</h3>
@@ -14,13 +19,15 @@ export function ColorPropertyGroup({ backgroundColor, color, onChange }) {
             }
           />
         </PropertyRow>
-        <PropertyRow label="글자">
-          <input
-            type="color"
-            value={color}
-            onChange={(event) => onChange({ color: event.target.value })}
-          />
-        </PropertyRow>
+        {showTextColor ? (
+          <PropertyRow label="글자">
+            <input
+              type="color"
+              value={color}
+              onChange={(event) => onChange({ color: event.target.value })}
+            />
+          </PropertyRow>
+        ) : null}
       </div>
     </section>
   );

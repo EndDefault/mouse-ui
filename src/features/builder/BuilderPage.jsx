@@ -13,7 +13,8 @@ export function BuilderPage() {
     selectedId,
     addComponent,
     selectComponent,
-    changeComponent
+    changeComponent,
+    importProject
   } = useBuilderState();
   const htmlCode = generateHtml(components);
   const selectedComponent =
@@ -25,12 +26,19 @@ export function BuilderPage() {
         <div className="builder-topbar">
           <div>
             <h1>mouse-ui</h1>
-            <span>v0.3.0</span>
+            <span>v0.5.0</span>
           </div>
-          <strong>속성 패널</strong>
+          <strong>저장과 복사</strong>
         </div>
       }
-      toolbar={<Toolbar onAddComponent={addComponent} />}
+      toolbar={
+        <Toolbar
+          components={components}
+          selectedId={selectedId}
+          onAddComponent={addComponent}
+          onImportProject={importProject}
+        />
+      }
       canvas={
         <Canvas
           components={components}

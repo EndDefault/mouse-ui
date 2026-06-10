@@ -81,7 +81,8 @@
   gap: 6px;
 }
 
-.property-row input {
+.property-row input,
+.property-row select {
   width: 100%;
   min-width: 0;
   height: 34px;
@@ -99,7 +100,8 @@
   padding: 3px;
 }
 
-.property-row input:focus {
+.property-row input:focus,
+.property-row select:focus {
   border-color: #2f9e8f;
   outline: 3px solid rgba(47, 158, 143, 0.18);
 }
