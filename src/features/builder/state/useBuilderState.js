@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { createComponent } from "../model/createComponent.js";
 import { getCanvasPreset } from "../model/canvasPresets.js";
 import {
@@ -15,6 +15,7 @@ import { normalizeProject } from "../storage/projectSerializer.js";
 export function useBuilderState() {
   const [project, setProject] = useState(() => loadBuilderProject());
   const [clipboard, setClipboard] = useState(null);
+  const historyRef = useRef({ past: [], future: [] });
   const { canvas, components, selectedId, selectedIds, styleDefaults } = project;
   const selectedComponent =
     components.find((component) => component.id === selectedId) ?? null;
@@ -23,8 +24,26 @@ export function useBuilderState() {
     saveBuilderProject(project);
   }, [project]);
 
-  function addComponent(type, options = {}) {
+  function commitProject(updater) {
     setProject((currentProject) => {
+      const nextProject =
+        typeof updater === "function" ? updater(currentProject) : updater;
+
+      if (nextProject === currentProject) {
+        return currentProject;
+      }
+
+      historyRef.current = {
+        past: [...historyRef.current.past.slice(-4), cloneComponent(currentProject)],
+        future: []
+      };
+
+      return nextProject;
+    });
+  }
+
+  function addComponent(type, options = {}) {
+    commitProject((currentProject) => {
       const order =
         currentProject.components.filter((component) => component.type === type)
           .length + 1;
@@ -91,7 +110,7 @@ export function useBuilderState() {
   }
 
   function changeComponent(id, patch) {
-    setProject((currentProject) => ({
+    commitProject((currentProject) => ({
       ...touchProject(currentProject),
       components: updateComponent(
         currentProject.components,
@@ -103,7 +122,7 @@ export function useBuilderState() {
   }
 
   function moveComponents(ids, delta) {
-    setProject((currentProject) => {
+    commitProject((currentProject) => {
       const movableIds = new Set(
         getMovableIds(ids, currentProject.components).filter((id) => {
           const component = currentProject.components.find(
@@ -136,7 +155,7 @@ export function useBuilderState() {
   }
 
   function deleteComponent(id) {
-    setProject((currentProject) => {
+    commitProject((currentProject) => {
       const deletedIds = getComponentFamilyIds(id, currentProject.components);
       const nextComponents = currentProject.components.filter(
         (component) => !deletedIds.has(component.id)
@@ -155,7 +174,7 @@ export function useBuilderState() {
   }
 
   function setComponentLocked(id, locked) {
-    setProject((currentProject) => {
+    commitProject((currentProject) => {
       const nextSelectedIds = locked
         ? currentProject.selectedIds.filter((selectedId) => selectedId !== id)
         : currentProject.selectedIds;
@@ -192,7 +211,7 @@ export function useBuilderState() {
       return;
     }
 
-    setProject((currentProject) => {
+    commitProject((currentProject) => {
       const copiedIds = new Set(
         clipboard.components.map((component) => component.id)
       );
@@ -232,7 +251,7 @@ export function useBuilderState() {
   }
 
   function changeCanvasSize(nextCanvas) {
-    setProject((currentProject) => {
+    commitProject((currentProject) => {
       const preset = getCanvasPreset(nextCanvas.presetId);
 
       return touchProject({
@@ -248,7 +267,7 @@ export function useBuilderState() {
   }
 
   function changeCanvasViewport(viewportPatch) {
-    setProject((currentProject) =>
+    commitProject((currentProject) =>
       touchProject({
         ...currentProject,
         canvas: {
@@ -263,7 +282,7 @@ export function useBuilderState() {
   }
 
   function changeStyleDefaultColor(color) {
-    setProject((currentProject) =>
+    commitProject((currentProject) =>
       touchProject({
         ...currentProject,
         styleDefaults: {
@@ -291,7 +310,7 @@ export function useBuilderState() {
   }
 
   function resetStyleDefaults() {
-    setProject((currentProject) =>
+    commitProject((currentProject) =>
       touchProject({
         ...currentProject,
         styleDefaults: createDefaultStyleDefaults()
@@ -300,7 +319,41 @@ export function useBuilderState() {
   }
 
   function importProject(nextProject) {
-    setProject(normalizeProject(nextProject));
+    commitProject(normalizeProject(nextProject));
+  }
+
+  function undoProject() {
+    setProject((currentProject) => {
+      const previousProject = historyRef.current.past.at(-1);
+
+      if (!previousProject) {
+        return currentProject;
+      }
+
+      historyRef.current = {
+        past: historyRef.current.past.slice(0, -1),
+        future: [cloneComponent(currentProject), ...historyRef.current.future].slice(0, 5)
+      };
+
+      return previousProject;
+    });
+  }
+
+  function redoProject() {
+    setProject((currentProject) => {
+      const nextProject = historyRef.current.future[0];
+
+      if (!nextProject) {
+        return currentProject;
+      }
+
+      historyRef.current = {
+        past: [...historyRef.current.past.slice(-4), cloneComponent(currentProject)],
+        future: historyRef.current.future.slice(1)
+      };
+
+      return nextProject;
+    });
   }
 
   return {
@@ -325,6 +378,8 @@ export function useBuilderState() {
     hasClipboard: Boolean(clipboard?.components.length),
     changeCanvasSize,
     changeCanvasViewport,
+    undoProject,
+    redoProject,
     importProject
   };
 }

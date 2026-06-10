@@ -39,6 +39,8 @@ export function BuilderPage() {
     resetStyleDefaults,
     changeCanvasSize,
     changeCanvasViewport,
+    undoProject,
+    redoProject,
     importProject
   } = useBuilderState();
   const htmlCode = generateHtml(project);
@@ -60,12 +62,22 @@ export function BuilderPage() {
         event.preventDefault();
         pasteComponents();
       }
+
+      if (event.key.toLowerCase() === "z") {
+        event.preventDefault();
+        undoProject();
+      }
+
+      if (event.key.toLowerCase() === "y") {
+        event.preventDefault();
+        redoProject();
+      }
     }
 
     window.addEventListener("keydown", handleKeyDown);
 
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [copyComponents, pasteComponents]);
+  }, [copyComponents, pasteComponents, redoProject, undoProject]);
 
   function playEnterPreview(componentId) {
     setAnimationPreview((currentPreview) => ({
