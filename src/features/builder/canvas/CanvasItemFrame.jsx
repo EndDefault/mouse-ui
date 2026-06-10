@@ -53,13 +53,19 @@ export function CanvasItemFrame({
   const className = [
     "canvas-item-frame",
     isContainer ? "is-container" : "",
-    isSelected ? "is-selected" : ""
+    isSelected ? "is-selected" : "",
+    component.locked ? "is-locked" : ""
   ]
     .filter(Boolean)
     .join(" ");
 
   function handleClick(event) {
     event.stopPropagation();
+
+    if (component.locked) {
+      return;
+    }
+
     onSelect(component.id, { toggle: event.shiftKey });
   }
 
@@ -68,10 +74,13 @@ export function CanvasItemFrame({
 
     event.preventDefault();
     event.stopPropagation();
-    onSelect(component.id);
+    if (!component.locked) {
+      onSelect(component.id);
+    }
     onOpenContextMenu({
       componentId: component.id,
       canAddChildren: isContainer,
+      isLocked: component.locked === true,
       clientX: event.clientX,
       clientY: event.clientY,
       localX: (event.clientX - rect.left) / scale,
@@ -155,6 +164,8 @@ export function CanvasItemFrame({
     <Rnd
       bounds="parent"
       className={className}
+      disableDragging={component.locked}
+      enableResizing={!component.locked}
       minWidth={64}
       minHeight={32}
       position={{ x: component.x, y: component.y }}

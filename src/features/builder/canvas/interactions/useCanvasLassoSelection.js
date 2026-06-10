@@ -123,6 +123,7 @@ function getComponentsInBox(box, components) {
   );
 
   return components
+    .filter((component) => !component.locked)
     .filter((component) =>
       intersects(box, getGlobalComponentRect(component, componentsById))
     )

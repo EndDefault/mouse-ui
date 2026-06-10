@@ -39,6 +39,14 @@ export function useBuilderState() {
 
   function selectComponent(id, options = {}) {
     setProject((currentProject) => {
+      const component = currentProject.components.find(
+        (currentComponent) => currentComponent.id === id
+      );
+
+      if (component?.locked) {
+        return currentProject;
+      }
+
       if (!id || !options.toggle) {
         return {
           ...currentProject,
@@ -63,7 +71,9 @@ export function useBuilderState() {
   function selectComponents(ids) {
     setProject((currentProject) => {
       const componentIds = new Set(
-        currentProject.components.map((component) => component.id)
+        currentProject.components
+          .filter((component) => !component.locked)
+          .map((component) => component.id)
       );
       const nextSelectedIds = ids.filter((id) => componentIds.has(id));
 
@@ -78,13 +88,26 @@ export function useBuilderState() {
   function changeComponent(id, patch) {
     setProject((currentProject) => ({
       ...touchProject(currentProject),
-      components: updateComponent(currentProject.components, id, patch)
+      components: updateComponent(
+        currentProject.components,
+        id,
+        patch,
+        { allowLocked: false }
+      )
     }));
   }
 
   function moveComponents(ids, delta) {
     setProject((currentProject) => {
-      const movableIds = new Set(getMovableIds(ids, currentProject.components));
+      const movableIds = new Set(
+        getMovableIds(ids, currentProject.components).filter((id) => {
+          const component = currentProject.components.find(
+            (currentComponent) => currentComponent.id === id
+          );
+
+          return !component?.locked;
+        })
+      );
 
       if (movableIds.size === 0) {
         return currentProject;
@@ -120,6 +143,26 @@ export function useBuilderState() {
       return touchProject({
         ...currentProject,
         components: nextComponents,
+        selectedId: nextSelectedIds[0] ?? null,
+        selectedIds: nextSelectedIds
+      });
+    });
+  }
+
+  function setComponentLocked(id, locked) {
+    setProject((currentProject) => {
+      const nextSelectedIds = locked
+        ? currentProject.selectedIds.filter((selectedId) => selectedId !== id)
+        : currentProject.selectedIds;
+
+      return touchProject({
+        ...currentProject,
+        components: updateComponent(
+          currentProject.components,
+          id,
+          { locked },
+          { allowLocked: true }
+        ),
         selectedId: nextSelectedIds[0] ?? null,
         selectedIds: nextSelectedIds
       });
@@ -230,6 +273,7 @@ export function useBuilderState() {
     changeComponent,
     moveComponents,
     deleteComponent,
+    setComponentLocked,
     copyComponents,
     pasteComponents,
     hasClipboard: Boolean(clipboard?.components.length),

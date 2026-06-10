@@ -2,11 +2,13 @@ import { Rnd } from "react-rnd";
 import { CodePanel } from "../code/CodePanel.jsx";
 import { InspectorPanel } from "../inspector/InspectorPanel.jsx";
 import { BUILDER_PANEL_TABS } from "../workspace/workspaceSettings.js";
+import { LockedComponentsPanel } from "./LockedComponentsPanel.jsx";
 
 const PANEL_TABS = [
   { id: BUILDER_PANEL_TABS.ADJUST, label: "조정" },
   { id: BUILDER_PANEL_TABS.STYLE, label: "꾸미기" },
   { id: BUILDER_PANEL_TABS.ANIMATION, label: "애니메이션" },
+  { id: BUILDER_PANEL_TABS.LOCKED, label: "잠금" },
   { id: BUILDER_PANEL_TABS.HTML, label: "HTML" }
 ];
 
@@ -16,6 +18,7 @@ const PANEL_MIN_HEIGHT = 360;
 export function DockingPanel({
   panel,
   component,
+  components,
   code,
   componentCount,
   selectedIds,
@@ -23,6 +26,7 @@ export function DockingPanel({
   onChangePanel,
   onResetPanel,
   onChangeComponent,
+  onSetComponentLocked,
   onPlayEnterPreview,
   onToggleStatePreview
 }) {
@@ -38,6 +42,7 @@ export function DockingPanel({
     <PanelShell
       panel={panel}
       component={component}
+      components={components}
       code={code}
       componentCount={componentCount}
       selectedIds={selectedIds}
@@ -46,6 +51,7 @@ export function DockingPanel({
       onResetPanel={onResetPanel}
       onToggleDocking={toggleDocking}
       onChangeComponent={onChangeComponent}
+      onSetComponentLocked={onSetComponentLocked}
       onPlayEnterPreview={onPlayEnterPreview}
       onToggleStatePreview={onToggleStatePreview}
     />
@@ -92,6 +98,7 @@ export function DockingPanel({
 function PanelShell({
   panel,
   component,
+  components,
   code,
   componentCount,
   selectedIds,
@@ -100,6 +107,7 @@ function PanelShell({
   onResetPanel,
   onToggleDocking,
   onChangeComponent,
+  onSetComponentLocked,
   onPlayEnterPreview,
   onToggleStatePreview
 }) {
@@ -144,6 +152,11 @@ function PanelShell({
             code={code}
             componentCount={componentCount}
             selectedIds={selectedIds}
+          />
+        ) : panel.activeTab === BUILDER_PANEL_TABS.LOCKED ? (
+          <LockedComponentsPanel
+            components={components}
+            onUnlock={(componentId) => onSetComponentLocked(componentId, false)}
           />
         ) : (
           <InspectorPanel

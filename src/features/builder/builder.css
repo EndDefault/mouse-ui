@@ -180,7 +180,7 @@
 
 .docking-panel-tabs {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   padding: 8px;
   border-bottom: 1px solid #e5ded4;
   gap: 6px;
@@ -454,6 +454,11 @@
 .canvas-item-frame.is-selected {
   border-color: #f06f47;
   box-shadow: 0 0 0 4px rgba(240, 111, 71, 0.2);
+}
+
+.canvas-item-frame.is-locked {
+  border-style: dashed;
+  cursor: not-allowed;
 }
 
 .canvas-animation-layer {
@@ -753,4 +758,63 @@
   color: #8a8175;
   font-size: 14px;
   font-weight: 800;
+}
+
+.locked-components-panel {
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+}
+
+.locked-component-list {
+  display: grid;
+  gap: 8px;
+}
+
+.locked-component-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 10px;
+  border: 1px solid #d8cfc3;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.locked-component-row div {
+  display: grid;
+  min-width: 0;
+  gap: 2px;
+}
+
+.locked-component-row strong,
+.locked-component-row span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.locked-component-row strong {
+  color: #2f2a25;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.locked-component-row span {
+  color: #776f64;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.locked-component-row button {
+  height: 30px;
+  padding: 0 10px;
+  border: 1px solid #d8cfc3;
+  border-radius: 8px;
+  color: #2f2a25;
+  background: #ffffff;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
 }

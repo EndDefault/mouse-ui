@@ -1,6 +1,10 @@
-export function updateComponent(components, id, patch) {
+export function updateComponent(components, id, patch, options = {}) {
   return components.map((component) => {
     if (component.id !== id) {
+      return component;
+    }
+
+    if (component.locked && !options.allowLocked) {
       return component;
     }
 

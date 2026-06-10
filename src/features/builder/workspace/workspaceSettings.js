@@ -2,6 +2,7 @@ export const BUILDER_PANEL_TABS = {
   ADJUST: "adjust",
   STYLE: "style",
   ANIMATION: "animation",
+  LOCKED: "locked",
   HTML: "html"
 };
 

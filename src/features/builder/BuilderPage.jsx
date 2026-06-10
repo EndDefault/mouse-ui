@@ -32,6 +32,7 @@ export function BuilderPage() {
     pasteComponents,
     hasClipboard,
     deleteComponent,
+    setComponentLocked,
     changeCanvasSize,
     changeCanvasViewport,
     importProject
@@ -120,12 +121,14 @@ export function BuilderPage() {
             onCopyComponents={copyComponents}
             onPasteComponents={pasteComponents}
             hasClipboard={hasClipboard}
+            onSetComponentLocked={setComponentLocked}
             onDeleteComponent={deleteComponent}
             onChangeViewport={changeCanvasViewport}
           />
           <DockingPanel
             panel={settings.panel}
             component={selectedComponent}
+            components={components}
             code={htmlCode}
             componentCount={components.length}
             selectedIds={selectedIds}
@@ -133,6 +136,7 @@ export function BuilderPage() {
             onChangePanel={changePanel}
             onResetPanel={resetPanel}
             onChangeComponent={changeComponent}
+            onSetComponentLocked={setComponentLocked}
             onPlayEnterPreview={playEnterPreview}
             onToggleStatePreview={toggleStatePreview}
           />

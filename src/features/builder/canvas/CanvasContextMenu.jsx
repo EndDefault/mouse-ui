@@ -15,6 +15,7 @@ export function CanvasContextMenu({
   onAdd,
   onCopy,
   onPaste,
+  onToggleLock,
   onDelete,
   onClose
 }) {
@@ -48,9 +49,14 @@ export function CanvasContextMenu({
           <button type="button" onClick={onCopy}>
             복사
           </button>
-          <button className="is-danger" type="button" onClick={onDelete}>
-            삭제
+          <button type="button" onClick={onToggleLock}>
+            {menu.isLocked ? "고정 해제" : "고정"}
           </button>
+          {!menu.isLocked ? (
+            <button className="is-danger" type="button" onClick={onDelete}>
+              삭제
+            </button>
+          ) : null}
         </>
       ) : null}
       <button type="button" disabled={!canPaste} onClick={onPaste}>

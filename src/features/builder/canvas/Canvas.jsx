@@ -14,6 +14,7 @@ export function Canvas({
   onCopyComponents,
   onPasteComponents,
   hasClipboard,
+  onSetComponentLocked,
   onDeleteComponent,
   onChangeViewport
 }) {
@@ -41,6 +42,7 @@ export function Canvas({
           onCopyComponents={onCopyComponents}
           onPasteComponents={onPasteComponents}
           hasClipboard={hasClipboard}
+          onSetComponentLocked={onSetComponentLocked}
           onDeleteComponent={onDeleteComponent}
           onChangeViewport={onChangeViewport}
         />

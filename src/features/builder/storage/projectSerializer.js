@@ -128,6 +128,7 @@ function normalizeComponent(component, index) {
     y: readNumber(component.y, 80),
     width: readNumber(component.width, 120, 32),
     height: readNumber(component.height, 40, 24),
+    locked: component.locked === true,
     props: normalizeProps(component, type),
     style: normalizeStyle(component, type),
     interactions: normalizeInteractions(component.interactions)

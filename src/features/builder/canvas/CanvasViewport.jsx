@@ -21,6 +21,7 @@ export function CanvasViewport({
   onCopyComponents,
   onPasteComponents,
   hasClipboard,
+  onSetComponentLocked,
   onDeleteComponent,
   onChangeViewport
 }) {
@@ -37,12 +38,14 @@ export function CanvasViewport({
     addComponentToContainer,
     copyComponentFromMenu,
     pasteComponentFromMenu,
+    toggleLockFromMenu,
     deleteComponentFromMenu
   } = useCanvasContextMenu({
     selectedIds,
     onAddComponent,
     onCopyComponents,
     onPasteComponents,
+    onSetComponentLocked,
     onDeleteComponent
   });
   const {
@@ -163,6 +166,7 @@ export function CanvasViewport({
         onAdd={addComponentToContainer}
         onCopy={copyComponentFromMenu}
         onPaste={pasteComponentFromMenu}
+        onToggleLock={toggleLockFromMenu}
         onDelete={deleteComponentFromMenu}
         onClose={closeMenu}
       />

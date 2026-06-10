@@ -5,6 +5,7 @@ export function useCanvasContextMenu({
   onAddComponent,
   onCopyComponents,
   onPasteComponents,
+  onSetComponentLocked,
   onDeleteComponent
 }) {
   const [menu, setMenu] = useState(null);
@@ -90,6 +91,15 @@ export function useCanvasContextMenu({
     closeMenu();
   }
 
+  function toggleLockFromMenu() {
+    if (!menu?.componentId) {
+      return;
+    }
+
+    onSetComponentLocked(menu.componentId, !menu.isLocked);
+    closeMenu();
+  }
+
   return {
     menu,
     openMenu,
@@ -97,6 +107,7 @@ export function useCanvasContextMenu({
     addComponentToContainer,
     copyComponentFromMenu,
     pasteComponentFromMenu,
+    toggleLockFromMenu,
     deleteComponentFromMenu
   };
 }
