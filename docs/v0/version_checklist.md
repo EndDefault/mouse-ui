@@ -83,7 +83,7 @@ v1.0.0  1차 MVP 완성
 - [x] `src/features/builder/code` 폴더를 만든다.
 - [x] `src/features/builder/model` 폴더를 만든다.
 - [x] `src/features/builder/codegen` 폴더를 만든다.
-- [x] `docs/file_structure_rules.md` 기준에 맞춰 v0.1.0 파일만 만든다.
+- [x] `docs/v0/file_structure_rules.md` 기준에 맞춰 v0.1.0 파일만 만든다.
 
 ### 기본 레이아웃
 

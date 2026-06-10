@@ -17,7 +17,7 @@
 - [작업 흐름 설명서](../workflow.md)
 - [커밋 규칙](../commit_convention.md)
 - [PR 작성 규칙](../pr_convention.md)
-- [v0 작업 기록](../history/v0.md)
+- [v0 문서 안내](../v0/README.md)
 
 ## 사용 순서
 

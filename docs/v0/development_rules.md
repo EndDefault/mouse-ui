@@ -144,7 +144,7 @@ src/
 - `shared` 폴더는 여러 기능에서 반복되는 UI와 hook을 담당한다.
 - `global` 폴더는 전역 스타일과 앱 전체 상수를 담당한다.
 - 큰 기능을 만들기 전까지 전역 상태 라이브러리는 사용하지 않는다.
-- 자세한 파일 분리 기준은 `docs/file_structure_rules.md`를 따른다.
+- 자세한 파일 분리 기준은 `docs/v0/file_structure_rules.md`를 따른다.
 
 ## 8. MVP 구현 우선순위
 

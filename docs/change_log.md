@@ -2,7 +2,7 @@
 
 이 문서는 작업 진행 체크리스트가 아니라, 프로젝트 방향이나 기준이 바뀐 큰 결정을 기록한다.
 
-진행 여부는 `docs/version_checklist.md`에서 관리하고, 이 문서에는 기존 방향을 바꾸거나 덮어쓰는 결정만 남긴다.
+진행 여부는 버전별 체크리스트에서 관리하고, 이 문서에는 기존 방향을 바꾸거나 덮어쓰는 결정만 남긴다.
 
 ## 기록 기준
 
@@ -17,6 +17,34 @@
 
 ## 2026-06-10
 
+### v0 문서 폴더 정리
+
+이전 기준:
+
+- v0 전용 기획, 개발 규칙, 파일 구조, 체크리스트 문서가 `docs/` 최상위에 섞여 있었다.
+- v0 작업 기록은 `docs/history/`에 따로 있었다.
+
+변경 기준:
+
+- v0 전용 문서는 `docs/v0/` 아래에 모아둔다.
+- 여러 버전에서 함께 쓰는 `workflow`, `change_log`, `commit_convention`, `pr_convention`은 `docs/` 최상위에 둔다.
+- v1 문서는 기존처럼 `docs/v1/`에서 관리한다.
+
+변경 이유:
+
+- 현재 작업 기준인 v1 문서와 완료된 v0 문서가 섞이지 않게 하기 위해
+- 버전별 문서와 공통 운영 문서의 책임을 명확히 하기 위해
+
+영향받는 문서:
+
+- `docs/README.md`
+- `docs/v0/README.md`
+- `docs/v0/product_plan.md`
+- `docs/v0/development_rules.md`
+- `docs/v0/file_structure_rules.md`
+- `docs/v0/version_checklist.md`
+- `docs/v0/history.md`
+
 ### v1 기획 문서 분리
 
 이전 기준:
@@ -26,7 +54,7 @@
 
 변경 기준:
 
-- `v0`는 첫 저장 가능한 기준점으로 history에 보관한다.
+- `v0`는 첫 저장 가능한 기준점으로 `docs/v0/`에 보관한다.
 - 다음 작업은 `v0.6.0`을 별도로 진행하지 않고, `docs/v1/`에서 v1 목표와 구조를 다시 기획한다.
 - v1 핵심 방향은 영역 구성, 반응형 작업 환경, 스타일 확장, 애니메이션, 캔버스 조작 편의성으로 둔다.
 - 구현 전에 workflow, checklist, 파일 구조, 데이터 규칙, Ollama/DB 확장 기준을 먼저 정리한다.
@@ -45,7 +73,7 @@
 - `docs/v1/checklist.md`
 - `docs/v1/file_structure.md`
 - `docs/v1/data_rules.md`
-- `docs/version_checklist.md`
+- `docs/v0/version_checklist.md`
 
 ## 2026-06-09
 
@@ -71,7 +99,7 @@
 
 영향받는 문서:
 
-- `docs/file_structure_rules.md`
-- `docs/development_rules.md`
-- `docs/product_plan.md`
-- `docs/version_checklist.md`
+- `docs/v0/file_structure_rules.md`
+- `docs/v0/development_rules.md`
+- `docs/v0/product_plan.md`
+- `docs/v0/version_checklist.md`

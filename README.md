@@ -55,14 +55,15 @@ UI 데이터
 ## 문서
 
 - [docs 구조 안내](docs/README.md)
+- [v0 문서 안내](docs/v0/README.md)
 - [v1 기획 문서](docs/v1/README.md)
 - [작업 흐름 설명서](docs/workflow.md)
-- [제품 기획서](docs/product_plan.md)
-- [개발 방향 및 규칙](docs/development_rules.md)
-- [파일 구조 및 분리 규칙](docs/file_structure_rules.md)
-- [버전 관리 및 체크리스트](docs/version_checklist.md)
+- [v0 제품 기획서](docs/v0/product_plan.md)
+- [v0 개발 방향 및 규칙](docs/v0/development_rules.md)
+- [v0 파일 구조 및 분리 규칙](docs/v0/file_structure_rules.md)
+- [v0 버전 관리 및 체크리스트](docs/v0/version_checklist.md)
 - [변경 기록](docs/change_log.md)
-- [v0 작업 기록](docs/history/v0.md)
+- [v0 작업 기록](docs/v0/history.md)
 - [커밋 규칙](docs/commit_convention.md)
 - [PR 작성 규칙](docs/pr_convention.md)
 

@@ -90,7 +90,7 @@ PR 본문은 아래 형식을 기본으로 사용한다.
 예시:
 
 - README를 프로젝트 index + savepoint 형식으로 정리했다.
-- `docs/version_checklist.md`에 버전별 체크리스트를 추가했다.
+- `docs/v0/version_checklist.md`에 버전별 체크리스트를 추가했다.
 - `features/builder` 중심의 파일 구조 기준을 문서화했다.
 
 ### 변경 이유
@@ -118,9 +118,9 @@ PR 본문은 아래 형식을 기본으로 사용한다.
 
 예시:
 
-- `docs/product_plan.md`
-- `docs/file_structure_rules.md`
-- `docs/version_checklist.md`
+- `docs/v0/product_plan.md`
+- `docs/v0/file_structure_rules.md`
+- `docs/v0/version_checklist.md`
 
 ### 다음 작업
 
