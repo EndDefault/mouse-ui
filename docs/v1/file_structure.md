@@ -1,91 +1,92 @@
 # v1 파일 구조 기준
 
-v1에서는 기능이 커지므로 한 파일에 상태, UI, 렌더링, 코드 생성이 몰리지 않게 한다.
+v1은 기능별 책임이 한 파일에 몰리지 않도록 `src/features/builder/` 아래에서 캔버스, 인스펙터, 코드 생성, 저장, 작업 패널을 분리한다.
 
-## 기본 원칙
-
-- 파일은 책임 단위로 나눈다.
-- 컴포넌트 정의, 캔버스 렌더링, Inspector, codegen, 저장 로직을 섞지 않는다.
-- 하나의 파일이 여러 기능을 동시에 설명하기 시작하면 분리한다.
-- 새 기능은 먼저 위치를 정하고 구현한다.
-
-## 권장 구조
+## 주요 구조
 
 ```txt
 src/features/builder/
+  BuilderPage.jsx
+  builder.css
+
   canvas/
+    Canvas.jsx
     CanvasViewport.jsx
-    CanvasSurface.jsx
     CanvasItemFrame.jsx
+    CanvasContextMenu.jsx
     interactions/
       useCanvasPanZoom.js
       useCanvasContextMenu.js
+      useCanvasLassoSelection.js
     renderers/
-      ButtonRenderer.jsx
-      TextRenderer.jsx
-      InputRenderer.jsx
-      ContainerRenderer.jsx
+      ButtonCanvasItem.jsx
+      TextCanvasItem.jsx
+      InputCanvasItem.jsx
+      ContainerCanvasItem.jsx
+      ImageCanvasItem.jsx
 
-  components/
-    definitions/
-      buttonDefinition.js
-      textDefinition.js
-      inputDefinition.js
-      containerDefinition.js
-    createComponent.js
-
-  inspector/
-    InspectorPanel.jsx
-    InspectorField.jsx
-    GradientEditor.jsx
-    AnimationEditor.jsx
+  code/
+    CodePanel.jsx
+    CodeBlock.jsx
+    CopyCodeButton.jsx
 
   codegen/
     generateHtml.js
-    renderComponentHtml.js
-    renderStyles.js
+    generateHtmlForComponent.js
     renderAnimations.js
+
+  inspector/
+    InspectorPanel.jsx
+    AnimationEditor.jsx
+    GradientEditor.jsx
+    fields/
+      BorderPropertyGroup.jsx
+      ColorPropertyGroup.jsx
+      OpacityProperty.jsx
+      RadiusProperty.jsx
+      ShadowPropertyGroup.jsx
+
+  model/
+    componentTypes.js
+    createComponent.js
+    styleValues.js
+    updateComponent.js
+    canvasPresets.js
+
+  panel/
+    DockingPanel.jsx
+
+  state/
+    useBuilderState.js
 
   storage/
     builderStorage.js
     projectSerializer.js
-    projectSchema.js
 
   toolbar/
     Toolbar.jsx
     CanvasSizeControl.jsx
     ProjectJsonControls.jsx
 
-  model/
-    componentTypes.js
-    canvasPresets.js
+  workspace/
+    useWorkspaceSettings.js
+    workspaceSettings.js
 ```
 
-## 기능별 위치
+## 책임 기준
 
-| 기능 | 주요 위치 |
-| --- | --- |
-| 캔버스 이동 / 줌 | `canvas/interactions`, `canvas/CanvasViewport.jsx` |
-| 화면 크기 지정 | `model/canvasPresets.js`, `toolbar/CanvasSizeControl.jsx` |
-| 컨테이너 내부 요소 | `components/definitions`, `canvas/renderers`, `codegen` |
-| 우클릭 메뉴 | `canvas/interactions/useCanvasContextMenu.js` |
-| 그라데이션 | `inspector/GradientEditor.jsx`, `codegen/renderStyles.js` |
-| 애니메이션 | `inspector/AnimationEditor.jsx`, `codegen/renderAnimations.js` |
-| 저장/불러오기 | `storage/projectSerializer.js`, `storage/projectSchema.js` |
+- `canvas/`는 배치, 선택, 드래그, 리사이즈, 컨텍스트 메뉴, 캔버스 애니메이션 미리보기를 담당한다.
+- `inspector/`는 선택 요소의 속성 편집 UI를 담당한다.
+- `panel/`은 도킹 작업 패널의 탭, 드래그, 리사이즈, 붙이기/떼기를 담당한다.
+- `workspace/`는 project JSON과 분리된 작업 환경 설정을 담당한다.
+- `model/`은 컴포넌트 생성, 타입, 스타일 변환, 업데이트 로직을 담당한다.
+- `storage/`는 project JSON 저장/불러오기와 schema 정규화를 담당한다.
+- `codegen/`은 project 데이터를 HTML/CSS 문자열로 변환한다.
 
-## 분리 기준
+## v1.3 관련 기준
 
-- 같은 파일 안에 이벤트 처리와 렌더링 JSX가 모두 길어지면 이벤트 처리를 hook으로 분리한다.
-- 같은 파일 안에 컴포넌트별 분기가 많아지면 definition 또는 renderer로 분리한다.
-- Inspector 필드가 컴포넌트마다 달라지면 필드 정의를 데이터로 분리한다.
-- codegen에서 style, animation, nested HTML 처리가 섞이면 렌더 함수를 나눈다.
-- 저장/불러오기 검증 로직은 UI 파일에 두지 않는다.
-
-## 문서와 코드 연결
-
-새 기능을 만들 때는 아래 순서로 확인한다.
-
-1. `docs/v1/product_plan.md`에서 기능 목적을 확인한다.
-2. `docs/v1/data_rules.md`에서 필요한 데이터 형태를 확인한다.
-3. 이 문서에서 파일 위치를 정한다.
-4. 구현 후 `docs/v1/checklist.md`에서 완료 기준을 확인한다.
+- 박스는 새 컴포넌트 타입으로 만들지 않는다.
+- 기존 저장 데이터의 `box` 타입 변환은 `storage/projectSerializer.js`에서 처리한다.
+- 컨테이너 중첩 렌더링은 `canvas/CanvasItemFrame.jsx`와 `codegen/generateHtmlForComponent.js`에서 같은 `parentId` 관계를 사용한다.
+- 그라데이션, 그림자, border, 투명도 변환은 `model/styleValues.js`에 둔다.
+- 작업 패널 위치와 크기는 `workspace/useWorkspaceSettings.js`에서 관리한다.

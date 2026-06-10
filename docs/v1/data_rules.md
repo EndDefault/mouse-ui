@@ -1,18 +1,15 @@
 # v1 데이터 규칙
 
-v1 데이터는 캔버스, 컴포넌트, 스타일, 애니메이션, 저장/불러오기, 이후 Ollama와 DB 연동까지 확장될 수 있어야 한다.
-
-이 문서는 최종 schema가 아니라 v1 기획을 위한 데이터 기준 초안이다.
+v1 데이터는 사용자가 만든 UI를 복원할 수 있는 project JSON과, 작업 환경을 저장하는 workspace settings로 분리한다.
 
 ## 기본 원칙
 
-- UI는 HTML 문자열이 아니라 project 데이터로 관리한다.
-- 캔버스 미리보기, Inspector, codegen, 저장/불러오기는 같은 project 데이터를 사용한다.
-- 컴포넌트의 종류가 늘어나도 공통 필드는 유지한다.
-- 데이터에는 `schemaVersion`을 둔다.
-- 불러오기 시 알 수 없는 값은 기본값으로 복구한다.
+- project JSON에는 캔버스, 컴포넌트, 선택 상태, 생성에 필요한 스타일과 애니메이션만 저장한다.
+- 작업 패널 위치, 크기, 열린 탭, 도킹 여부는 workspace settings에 저장한다.
+- 저장 데이터를 불러올 때 알 수 없는 값은 안전한 기본값으로 복구한다.
+- 기존 저장 데이터에 남아 있을 수 있는 `box` 타입은 삭제하지 않고 `container`로 변환한다.
 
-## project 구조 초안
+## project 구조
 
 ```js
 {
@@ -30,6 +27,8 @@ v1 데이터는 캔버스, 컴포넌트, 스타일, 애니메이션, 저장/불�
     }
   },
   components: [],
+  selectedId: null,
+  selectedIds: [],
   metadata: {
     createdAt: "2026-06-10T00:00:00.000Z",
     updatedAt: "2026-06-10T00:00:00.000Z"
@@ -37,60 +36,47 @@ v1 데이터는 캔버스, 컴포넌트, 스타일, 애니메이션, 저장/불�
 }
 ```
 
-## component 구조 초안
+## component 구조
 
 ```js
 {
-  id: "component-id",
+  id: "button-1",
   type: "button",
   parentId: null,
   name: "Button",
-  x: 40,
-  y: 40,
-  width: 120,
+  x: 96,
+  y: 80,
+  width: 132,
   height: 44,
   props: {
-    text: "Button"
+    text: "버튼"
   },
-  style: {
-    background: {
-      type: "solid",
-      color: "#2563eb",
-      gradient: null
-    },
-    color: "#ffffff",
-    borderRadius: 8
-  },
+  style: {},
   interactions: []
 }
 ```
 
+지원 타입:
+
+- `container`
+- `button`
+- `text`
+- `input`
+- `image`
+
+legacy 타입:
+
+- `box`는 불러오기 과정에서 `container`로 변환한다.
+
 ## 컨테이너 규칙
 
-컨테이너 안에 들어간 요소는 `parentId`로 부모를 참조한다.
-
-```js
-{
-  id: "text-1",
-  type: "text",
-  parentId: "container-1",
-  x: 24,
-  y: 24,
-  width: 160,
-  height: 32
-}
-```
-
-규칙:
-
-- `parentId`가 없으면 캔버스 최상위 요소다.
+- `parentId`가 없으면 최상위 캔버스 요소다.
 - `parentId`가 있으면 좌표는 부모 컨테이너 기준으로 해석한다.
-- 부모 컨테이너를 이동하면 자식 요소는 화면에서 함께 움직인다.
-- codegen은 `parentId` 관계를 사용해 중첩 HTML을 만든다.
+- 컨테이너 안에는 버튼, 텍스트, input, 이미지, 컨테이너를 넣을 수 있다.
+- 컨테이너를 이동하면 내부 요소는 부모 기준 좌표를 유지하므로 화면에서는 함께 이동한다.
+- HTML 생성 시 `parentId` 관계를 사용해 중첩된 `<div>` 구조를 만든다.
 
-## 그라데이션 규칙
-
-단일 색상과 그라데이션을 같은 필드에서 구분한다.
+## style 구조
 
 ```js
 {
@@ -98,23 +84,45 @@ v1 데이터는 캔버스, 컴포넌트, 스타일, 애니메이션, 저장/불�
     type: "gradient",
     color: "#2563eb",
     gradient: {
+      kind: "linear",
       direction: "to right",
       from: "#2563eb",
-      to: "#14b8a6"
+      to: "#14b8a6",
+      fromPosition: 0,
+      toPosition: 100
     }
+  },
+  color: "#ffffff",
+  borderRadius: 8,
+  opacity: 1,
+  shadow: {
+    enabled: false,
+    x: 0,
+    y: 8,
+    blur: 18,
+    spread: 0,
+    color: "#000000",
+    opacity: 0.18
+  },
+  border: {
+    enabled: false,
+    color: "#d8cfc3",
+    width: 1,
+    style: "solid"
   }
 }
 ```
 
 규칙:
 
-- `type`이 `solid`이면 `color`를 사용한다.
-- `type`이 `gradient`이면 `gradient`를 사용한다.
-- codegen은 `linear-gradient(direction, from, to)` 형태로 변환한다.
+- `background.type`이 `solid`이면 `background.color`를 사용한다.
+- `background.type`이 `gradient`이면 `background.gradient`를 사용한다.
+- 그라데이션은 우선 `linear`만 지원한다.
+- `fromPosition`과 `toPosition`은 0부터 100 사이의 퍼센트 값이다.
+- `shadow.enabled`가 false이면 `box-shadow:none`으로 출력한다.
+- `border.enabled`가 false이면 `border:0`으로 출력한다.
 
-## 애니메이션 규칙
-
-이벤트와 애니메이션 효과를 요소별 `interactions`에 저장한다.
+## animation 구조
 
 ```js
 {
@@ -133,14 +141,14 @@ v1 데이터는 캔버스, 컴포넌트, 스타일, 애니메이션, 저장/불�
 }
 ```
 
-이벤트 후보:
+지원 이벤트:
 
 - `hover`
 - `click`
 - `enter`
 - `stateChange`
 
-애니메이션 후보:
+지원 애니메이션:
 
 - `move`
 - `color`
@@ -148,74 +156,23 @@ v1 데이터는 캔버스, 컴포넌트, 스타일, 애니메이션, 저장/불�
 - `scale`
 - `opacity`
 
-## Ollama 입력 템플릿 초안
-
-Ollama에는 자유로운 설명만 넘기지 않고, 현재 project 데이터와 사용자의 요청을 함께 넘긴다.
+## workspace settings 구조
 
 ```js
 {
-  task: "modify_ui",
-  instruction: "모바일 화면에 로그인 폼을 만들어줘.",
-  project: {},
-  constraints: {
-    allowedComponentTypes: ["container", "button", "text", "input", "image"],
-    outputFormat: "project_patch"
+  panel: {
+    isDocked: true,
+    x: 24,
+    y: 24,
+    width: 380,
+    height: 640,
+    activeTab: "adjust"
   }
 }
 ```
 
-응답은 바로 UI에 반영하기보다 검증 가능한 patch 형태를 우선 검토한다.
-
-```js
-{
-  type: "project_patch",
-  operations: [
-    {
-      action: "add_component",
-      component: {}
-    }
-  ]
-}
-```
-
 규칙:
 
-- Ollama 응답은 project schema 검증을 통과해야 반영한다.
-- 알 수 없는 component type은 무시하거나 사용자 확인을 받는다.
-- 기존 project를 통째로 교체하기보다 patch 방식부터 검토한다.
-
-## DB 저장 규칙 초안
-
-DB 저장은 v1 필수 범위인지 먼저 결정한다. 다만 이후 확장을 위해 아래 구조를 후보로 둔다.
-
-```txt
-projects
-  id
-  name
-  schema_version
-  current_version_id
-  created_at
-  updated_at
-
-project_versions
-  id
-  project_id
-  version_number
-  project_json
-  created_at
-
-ai_requests
-  id
-  project_id
-  instruction
-  request_json
-  response_json
-  created_at
-```
-
-규칙:
-
-- 실제 UI 복원 기준은 `project_json`이다.
-- DB에는 생성된 HTML 문자열보다 project 데이터를 우선 저장한다.
-- AI 요청과 응답은 나중에 재현할 수 있도록 별도 기록한다.
-- localStorage와 JSON export는 DB 도입 전까지 같은 project schema를 사용한다.
+- workspace settings는 localStorage의 `mouse-ui.builder.workspace.v1` 키에 저장한다.
+- project JSON export/import에는 workspace settings를 포함하지 않는다.
+- 패널 레이아웃 초기화는 workspace settings만 기본값으로 되돌린다.
