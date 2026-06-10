@@ -48,6 +48,7 @@ function createInputComponent(order) {
     height: 68,
     props: {
       label: "이메일",
+      showLabel: true,
       placeholder: "이메일을 입력하세요",
       inputType: "email"
     },

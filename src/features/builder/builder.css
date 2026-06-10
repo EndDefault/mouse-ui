@@ -471,6 +471,10 @@
   font-weight: 700;
 }
 
+.canvas-input-item.is-label-hidden {
+  grid-template-rows: minmax(0, 1fr);
+}
+
 .canvas-container-bg {
   position: absolute;
   inset: 0;

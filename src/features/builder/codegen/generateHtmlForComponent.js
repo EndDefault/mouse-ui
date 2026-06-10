@@ -72,8 +72,8 @@ function generateInputHtml(component, depth) {
   const inputStyle = [
     "display:block",
     "width:100%",
-    "height:38px",
-    "margin-top:6px",
+    `height:${component.props.showLabel === false ? "100%" : "38px"}`,
+    component.props.showLabel === false ? "margin-top:0" : "margin-top:6px",
     "padding:0 12px",
     `border-radius:${component.style.borderRadius}px`,
     `border:${getBorderCss(component.style)}`,
@@ -83,6 +83,14 @@ function generateInputHtml(component, depth) {
     "font:600 14px system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif"
   ].join("; ");
   const indent = getIndent(depth);
+
+  if (component.props.showLabel === false) {
+    return [
+      `${indent}<div ${renderAttributes(component, wrapperStyle)}>`,
+      `${indent}  <input type="${escapeHtml(component.props.inputType)}" placeholder="${escapeHtml(component.props.placeholder)}" style="${inputStyle}" />`,
+      `${indent}</div>`
+    ].join("\n");
+  }
 
   return [
     `${indent}<label ${renderAttributes(component, wrapperStyle)}>`,

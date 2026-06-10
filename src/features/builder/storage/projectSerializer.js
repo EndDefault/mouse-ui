@@ -162,6 +162,8 @@ function normalizeProps(component, type) {
   if (type === COMPONENT_TYPES.INPUT) {
     return {
       label: readString(props.label ?? component.label, "이메일"),
+      showLabel:
+        typeof props.showLabel === "boolean" ? props.showLabel : true,
       placeholder: readString(
         props.placeholder ?? component.placeholder,
         "이메일을 입력하세요"

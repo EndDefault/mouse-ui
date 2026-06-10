@@ -5,9 +5,11 @@ import {
 } from "../../model/styleValues.js";
 
 export function InputCanvasItem({ component }) {
+  const showLabel = component.props.showLabel ?? true;
+
   return (
     <label
-      className="canvas-input-item"
+      className={`canvas-input-item ${showLabel ? "" : "is-label-hidden"}`}
       style={{
         opacity: component.style.opacity,
         "--input-bg": getBackgroundCss(component.style),
@@ -17,7 +19,7 @@ export function InputCanvasItem({ component }) {
         "--input-shadow": getShadowCss(component.style)
       }}
     >
-      <span>{component.props.label}</span>
+      {showLabel ? <span>{component.props.label}</span> : null}
       <input
         readOnly
         placeholder={component.props.placeholder}
