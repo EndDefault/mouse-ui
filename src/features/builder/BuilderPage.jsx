@@ -30,7 +30,7 @@ export function BuilderPage() {
         <div className="builder-topbar">
           <div>
             <h1>mouse-ui</h1>
-            <span>v1.0.0</span>
+            <span>v1.1.0</span>
           </div>
           <strong>화면 설계 도구</strong>
         </div>

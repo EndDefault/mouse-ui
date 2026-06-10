@@ -72,27 +72,12 @@ export function useCanvasPanZoom({ viewport, onChangeViewport }) {
   }, [isPanning, onChangeViewport]);
 
   function handleWheel(event) {
+    if (!event.altKey) {
+      return;
+    }
+
     event.preventDefault();
-
-    if (event.ctrlKey) {
-      zoomAtPointer(event);
-      return;
-    }
-
-    if (event.shiftKey) {
-      onChangeViewport(
-        roundViewport({
-          panX: viewport.panX - event.deltaY
-        })
-      );
-      return;
-    }
-
-    onChangeViewport(
-      roundViewport({
-        panY: viewport.panY - event.deltaY
-      })
-    );
+    zoomAtPointer(event);
   }
 
   function handleMouseDown(event) {

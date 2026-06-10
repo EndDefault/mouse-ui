@@ -22,7 +22,7 @@ body,
 
 body {
   min-width: 960px;
-  overflow: auto;
+  overflow: hidden;
 }
 
 button {
@@ -52,18 +52,27 @@ button {
 
 .app-toolbar {
   min-width: 0;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
   border-right: 1px solid #d9d2c7;
   background: #fcfaf5;
+  scrollbar-gutter: stable;
 }
 
 .app-canvas {
   min-width: 0;
   min-height: 0;
+  overflow: hidden;
   background: #ebe7df;
 }
 
 .app-side-panel {
   min-width: 0;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
   border-left: 1px solid #d9d2c7;
   background: #fffdf8;
+  scrollbar-gutter: stable;
 }
