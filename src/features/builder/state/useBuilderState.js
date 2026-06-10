@@ -37,12 +37,27 @@ export function useBuilderState() {
     });
   }
 
-  function selectComponent(id) {
-    setProject((currentProject) => ({
-      ...currentProject,
-      selectedId: id,
-      selectedIds: id ? [id] : []
-    }));
+  function selectComponent(id, options = {}) {
+    setProject((currentProject) => {
+      if (!id || !options.toggle) {
+        return {
+          ...currentProject,
+          selectedId: id,
+          selectedIds: id ? [id] : []
+        };
+      }
+
+      const isSelected = currentProject.selectedIds.includes(id);
+      const nextSelectedIds = isSelected
+        ? currentProject.selectedIds.filter((selectedId) => selectedId !== id)
+        : [...currentProject.selectedIds, id];
+
+      return {
+        ...currentProject,
+        selectedId: nextSelectedIds[0] ?? null,
+        selectedIds: nextSelectedIds
+      };
+    });
   }
 
   function selectComponents(ids) {

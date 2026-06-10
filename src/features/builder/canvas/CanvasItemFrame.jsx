@@ -60,7 +60,7 @@ export function CanvasItemFrame({
 
   function handleClick(event) {
     event.stopPropagation();
-    onSelect(component.id);
+    onSelect(component.id, { toggle: event.shiftKey });
   }
 
   function handleContextMenu(event) {
