@@ -29,6 +29,7 @@ export function createEmptyProject() {
     },
     components: [],
     selectedId: null,
+    selectedIds: [],
     metadata: {
       createdAt: now,
       updatedAt: now
@@ -54,15 +55,27 @@ export function normalizeProject(project) {
   )
     ? project.selectedId
     : null;
+  const selectedIds = normalizeSelectedIds(project?.selectedIds, components);
 
   return {
     schemaVersion: SCHEMA_VERSION,
     name: readString(project?.name, emptyProject.name),
     canvas: normalizeCanvas(project?.canvas, emptyProject.canvas),
     components,
-    selectedId,
+    selectedId: selectedIds[0] ?? selectedId,
+    selectedIds: selectedIds.length ? selectedIds : selectedId ? [selectedId] : [],
     metadata: normalizeMetadata(project?.metadata, emptyProject.metadata)
   };
+}
+
+function normalizeSelectedIds(selectedIds, components) {
+  if (!Array.isArray(selectedIds)) {
+    return [];
+  }
+
+  const componentIds = new Set(components.map((component) => component.id));
+
+  return selectedIds.filter((id) => componentIds.has(id));
 }
 
 function normalizeCanvas(canvas, fallbackCanvas) {

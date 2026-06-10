@@ -1,7 +1,7 @@
 import { CodeBlock } from "./CodeBlock.jsx";
 import { CopyCodeButton } from "./CopyCodeButton.jsx";
 
-export function CodePanel({ code, componentCount }) {
+export function CodePanel({ code, componentCount, selectedIds = [] }) {
   return (
     <div className="builder-code-panel">
       <div className="builder-code-header">
@@ -11,7 +11,7 @@ export function CodePanel({ code, componentCount }) {
           <CopyCodeButton code={code} />
         </div>
       </div>
-      <CodeBlock code={code} />
+      <CodeBlock code={code} selectedIds={selectedIds} />
     </div>
   );
 }

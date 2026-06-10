@@ -141,10 +141,11 @@ function getIndent(depth) {
 
 function renderAttributes(component, style) {
   const className = getAnimationClassName(component);
+  const idAttribute = `data-mouse-ui-id="${escapeHtml(component.id)}"`;
 
   if (!className) {
-    return `style="${style}"`;
+    return `${idAttribute} style="${style}"`;
   }
 
-  return `class="${className}" style="${style}"`;
+  return `${idAttribute} class="${className}" style="${style}"`;
 }

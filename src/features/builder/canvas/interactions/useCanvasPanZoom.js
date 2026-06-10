@@ -6,7 +6,7 @@ const ZOOM_STEP = 0.08;
 
 export function useCanvasPanZoom({ viewport, onChangeViewport }) {
   const stageRef = useRef(null);
-  const panSessionRef = useRef(null);
+  const panPointerRef = useRef(null);
   const suppressClickRef = useRef(false);
   const [isSpacePressed, setIsSpacePressed] = useState(false);
   const [isPanning, setIsPanning] = useState(false);
@@ -24,6 +24,8 @@ export function useCanvasPanZoom({ viewport, onChangeViewport }) {
     function handleKeyUp(event) {
       if (event.code === "Space") {
         setIsSpacePressed(false);
+        setIsPanning(false);
+        panPointerRef.current = null;
       }
     }
 
@@ -36,41 +38,6 @@ export function useCanvasPanZoom({ viewport, onChangeViewport }) {
     };
   }, []);
 
-  useEffect(() => {
-    if (!isPanning) {
-      return undefined;
-    }
-
-    function handleMouseMove(event) {
-      const session = panSessionRef.current;
-
-      if (!session) {
-        return;
-      }
-
-      const panX = session.startPanX + event.clientX - session.startClientX;
-      const panY = session.startPanY + event.clientY - session.startClientY;
-
-      suppressClickRef.current =
-        Math.abs(event.clientX - session.startClientX) > 2 ||
-        Math.abs(event.clientY - session.startClientY) > 2;
-      onChangeViewport(roundViewport({ panX, panY }));
-    }
-
-    function handleMouseUp() {
-      panSessionRef.current = null;
-      setIsPanning(false);
-    }
-
-    window.addEventListener("mousemove", handleMouseMove);
-    window.addEventListener("mouseup", handleMouseUp);
-
-    return () => {
-      window.removeEventListener("mousemove", handleMouseMove);
-      window.removeEventListener("mouseup", handleMouseUp);
-    };
-  }, [isPanning, onChangeViewport]);
-
   function handleWheel(event) {
     if (!event.altKey) {
       return;
@@ -81,18 +48,51 @@ export function useCanvasPanZoom({ viewport, onChangeViewport }) {
   }
 
   function handleMouseDown(event) {
-    if (!isSpacePressed || event.button !== 0) {
+    if (!isSpacePressed) {
       return;
     }
 
     event.preventDefault();
-    panSessionRef.current = {
-      startClientX: event.clientX,
-      startClientY: event.clientY,
-      startPanX: viewport.panX,
-      startPanY: viewport.panY
+  }
+
+  function handleMouseMove(event) {
+    if (!isSpacePressed) {
+      panPointerRef.current = null;
+      setIsPanning(false);
+      return;
+    }
+
+    event.preventDefault();
+
+    if (!panPointerRef.current) {
+      panPointerRef.current = {
+        clientX: event.clientX,
+        clientY: event.clientY
+      };
+      return;
+    }
+
+    const deltaX = event.clientX - panPointerRef.current.clientX;
+    const deltaY = event.clientY - panPointerRef.current.clientY;
+
+    panPointerRef.current = {
+      clientX: event.clientX,
+      clientY: event.clientY
     };
+    suppressClickRef.current =
+      suppressClickRef.current || Math.abs(deltaX) > 2 || Math.abs(deltaY) > 2;
     setIsPanning(true);
+    onChangeViewport(
+      roundViewport({
+        panX: viewport.panX + deltaX,
+        panY: viewport.panY + deltaY
+      })
+    );
+  }
+
+  function handleMouseLeave() {
+    panPointerRef.current = null;
+    setIsPanning(false);
   }
 
   function shouldSuppressClick() {
@@ -135,7 +135,9 @@ export function useCanvasPanZoom({ viewport, onChangeViewport }) {
     shouldSuppressClick,
     panZoomHandlers: {
       onWheel: handleWheel,
-      onMouseDown: handleMouseDown
+      onMouseDown: handleMouseDown,
+      onMouseMove: handleMouseMove,
+      onMouseLeave: handleMouseLeave
     }
   };
 }

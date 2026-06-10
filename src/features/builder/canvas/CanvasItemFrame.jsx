@@ -1,3 +1,4 @@
+import { useRef } from "react";
 import { Rnd } from "react-rnd";
 import { COMPONENT_TYPES } from "../model/componentTypes.js";
 import { BoxCanvasItem } from "./renderers/BoxCanvasItem.jsx";
@@ -24,10 +25,13 @@ export function CanvasItemFrame({
   isSelected,
   scale = 1,
   selectedId,
+  selectedIds = [],
   onOpenContextMenu,
   onSelect,
-  onChange
+  onChange,
+  onMoveComponents
 }) {
+  const dragPositionRef = useRef(null);
   const isContainer = component.type === COMPONENT_TYPES.CONTAINER;
   const childComponents = childrenByParent.get(component.id) ?? [];
   const className = [
@@ -44,10 +48,6 @@ export function CanvasItemFrame({
   }
 
   function handleContextMenu(event) {
-    if (!isContainer) {
-      return;
-    }
-
     const rect = event.currentTarget.getBoundingClientRect();
 
     event.preventDefault();
@@ -55,6 +55,7 @@ export function CanvasItemFrame({
     onSelect(component.id);
     onOpenContextMenu({
       componentId: component.id,
+      canAddChildren: isContainer,
       clientX: event.clientX,
       clientY: event.clientY,
       localX: (event.clientX - rect.left) / scale,
@@ -62,7 +63,52 @@ export function CanvasItemFrame({
     });
   }
 
+  function handleDragStart(_event, data) {
+    if (!isSelected) {
+      onSelect(component.id);
+    }
+
+    dragPositionRef.current = {
+      x: Math.round(data.x),
+      y: Math.round(data.y)
+    };
+  }
+
+  function handleDrag(_event, data) {
+    if (!isSelected || selectedIds.length < 2) {
+      return;
+    }
+
+    const previousPosition = dragPositionRef.current;
+
+    if (!previousPosition) {
+      return;
+    }
+
+    const nextPosition = {
+      x: Math.round(data.x),
+      y: Math.round(data.y)
+    };
+    const delta = {
+      x: nextPosition.x - previousPosition.x,
+      y: nextPosition.y - previousPosition.y
+    };
+
+    if (delta.x === 0 && delta.y === 0) {
+      return;
+    }
+
+    dragPositionRef.current = nextPosition;
+    onMoveComponents(selectedIds, delta);
+  }
+
   function handleDragStop(_event, data) {
+    dragPositionRef.current = null;
+
+    if (isSelected && selectedIds.length > 1) {
+      return;
+    }
+
     onChange(component.id, {
       x: Math.round(data.x),
       y: Math.round(data.y)
@@ -90,6 +136,8 @@ export function CanvasItemFrame({
       size={{ width: component.width, height: component.height }}
       onClick={handleClick}
       onContextMenu={handleContextMenu}
+      onDrag={handleDrag}
+      onDragStart={handleDragStart}
       onDragStop={handleDragStop}
       onResizeStop={handleResizeStop}
     >
@@ -113,12 +161,14 @@ export function CanvasItemFrame({
               key={childComponent.id}
               component={childComponent}
               childrenByParent={childrenByParent}
-              isSelected={childComponent.id === selectedId}
+              isSelected={selectedIds.includes(childComponent.id)}
               scale={scale}
               selectedId={selectedId}
+              selectedIds={selectedIds}
               onOpenContextMenu={onOpenContextMenu}
               onSelect={onSelect}
               onChange={onChange}
+              onMoveComponents={onMoveComponents}
             />
           ))}
         </>

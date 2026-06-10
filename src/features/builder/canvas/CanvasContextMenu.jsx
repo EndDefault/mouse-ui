@@ -7,7 +7,7 @@ const MENU_ITEMS = [
   { type: COMPONENT_TYPES.IMAGE, label: "이미지 추가" }
 ];
 
-export function CanvasContextMenu({ menu, onAdd, onClose }) {
+export function CanvasContextMenu({ menu, onAdd, onDelete, onClose }) {
   if (!menu) {
     return null;
   }
@@ -21,12 +21,21 @@ export function CanvasContextMenu({ menu, onAdd, onClose }) {
       }}
       onClick={(event) => event.stopPropagation()}
     >
-      <strong>컨테이너 요소</strong>
-      {MENU_ITEMS.map((item) => (
-        <button key={item.type} type="button" onClick={() => onAdd(item.type)}>
-          {item.label}
-        </button>
-      ))}
+      <strong>{menu.canAddChildren ? "컨테이너 요소" : "객체 메뉴"}</strong>
+      {menu.canAddChildren
+        ? MENU_ITEMS.map((item) => (
+            <button
+              key={item.type}
+              type="button"
+              onClick={() => onAdd(item.type)}
+            >
+              {item.label}
+            </button>
+          ))
+        : null}
+      <button className="is-danger" type="button" onClick={onDelete}>
+        삭제
+      </button>
       <button type="button" onClick={onClose}>
         닫기
       </button>

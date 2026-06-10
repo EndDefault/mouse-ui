@@ -13,9 +13,13 @@ export function BuilderPage() {
     canvas,
     components,
     selectedId,
+    selectedIds,
     addComponent,
     selectComponent,
+    selectComponents,
     changeComponent,
+    moveComponents,
+    deleteComponent,
     changeCanvasSize,
     changeCanvasViewport,
     importProject
@@ -30,7 +34,7 @@ export function BuilderPage() {
         <div className="builder-topbar">
           <div>
             <h1>mouse-ui</h1>
-            <span>v1.1.0</span>
+            <span>v1.2.0</span>
           </div>
           <strong>화면 설계 도구</strong>
         </div>
@@ -49,9 +53,13 @@ export function BuilderPage() {
           canvas={canvas}
           components={components}
           selectedId={selectedId}
+          selectedIds={selectedIds}
           onAddComponent={addComponent}
           onSelectComponent={selectComponent}
+          onSelectComponents={selectComponents}
           onChangeComponent={changeComponent}
+          onMoveComponents={moveComponents}
+          onDeleteComponent={deleteComponent}
           onChangeViewport={changeCanvasViewport}
         />
       }
@@ -61,7 +69,11 @@ export function BuilderPage() {
             component={selectedComponent}
             onChangeComponent={changeComponent}
           />
-          <CodePanel code={htmlCode} componentCount={components.length} />
+          <CodePanel
+            code={htmlCode}
+            componentCount={components.length}
+            selectedIds={selectedIds}
+          />
         </div>
       }
     />

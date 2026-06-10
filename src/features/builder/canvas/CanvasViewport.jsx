@@ -3,15 +3,20 @@ import { CanvasContextMenu } from "./CanvasContextMenu.jsx";
 import { CanvasEmptyState } from "./CanvasEmptyState.jsx";
 import { CanvasItemFrame } from "./CanvasItemFrame.jsx";
 import { useCanvasContextMenu } from "./interactions/useCanvasContextMenu.js";
+import { useCanvasLassoSelection } from "./interactions/useCanvasLassoSelection.js";
 import { useCanvasPanZoom } from "./interactions/useCanvasPanZoom.js";
 
 export function CanvasViewport({
   canvas,
   components,
   selectedId,
+  selectedIds,
   onAddComponent,
   onSelectComponent,
+  onSelectComponents,
   onChangeComponent,
+  onMoveComponents,
+  onDeleteComponent,
   onChangeViewport
 }) {
   const childrenByParent = useMemo(
@@ -23,8 +28,9 @@ export function CanvasViewport({
     menu,
     openMenu,
     closeMenu,
-    addComponentToContainer
-  } = useCanvasContextMenu({ onAddComponent });
+    addComponentToContainer,
+    deleteComponentFromMenu
+  } = useCanvasContextMenu({ onAddComponent, onDeleteComponent });
   const {
     stageRef,
     isSpacePressed,
@@ -35,6 +41,17 @@ export function CanvasViewport({
     viewport: canvas.viewport,
     onChangeViewport
   });
+  const {
+    selectionBox,
+    selectionHandlers,
+    shouldSuppressSelectionClick
+  } = useCanvasLassoSelection({
+    canvas,
+    components,
+    isSpacePressed,
+    stageRef,
+    onSelectComponents
+  });
   const shellClassName = [
     "canvas-pan-shell",
     isSpacePressed ? "is-space-ready" : "",
@@ -44,7 +61,7 @@ export function CanvasViewport({
     .join(" ");
 
   function handleViewportClick() {
-    if (shouldSuppressClick()) {
+    if (shouldSuppressClick() || shouldSuppressSelectionClick()) {
       return;
     }
 
@@ -72,6 +89,7 @@ export function CanvasViewport({
             height: canvas.height
           }}
           onClick={handleViewportClick}
+          {...selectionHandlers}
         >
           {components.length === 0 ? <CanvasEmptyState /> : null}
           {topLevelComponents.map((component) => (
@@ -79,19 +97,33 @@ export function CanvasViewport({
               key={component.id}
               component={component}
               childrenByParent={childrenByParent}
-              isSelected={component.id === selectedId}
+              isSelected={selectedIds.includes(component.id)}
               scale={canvas.viewport.zoom}
               selectedId={selectedId}
+              selectedIds={selectedIds}
               onOpenContextMenu={openMenu}
               onSelect={onSelectComponent}
               onChange={onChangeComponent}
+              onMoveComponents={onMoveComponents}
             />
           ))}
+          {selectionBox ? (
+            <div
+              className="canvas-selection-box"
+              style={{
+                left: selectionBox.x,
+                top: selectionBox.y,
+                width: selectionBox.width,
+                height: selectionBox.height
+              }}
+            />
+          ) : null}
         </div>
       </div>
       <CanvasContextMenu
         menu={menu}
         onAdd={addComponentToContainer}
+        onDelete={deleteComponentFromMenu}
         onClose={closeMenu}
       />
     </div>

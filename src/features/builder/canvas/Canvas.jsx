@@ -4,9 +4,13 @@ export function Canvas({
   canvas,
   components,
   selectedId,
+  selectedIds,
   onAddComponent,
   onSelectComponent,
+  onSelectComponents,
   onChangeComponent,
+  onMoveComponents,
+  onDeleteComponent,
   onChangeViewport
 }) {
   return (
@@ -23,9 +27,13 @@ export function Canvas({
           canvas={canvas}
           components={components}
           selectedId={selectedId}
+          selectedIds={selectedIds}
           onAddComponent={onAddComponent}
           onSelectComponent={onSelectComponent}
+          onSelectComponents={onSelectComponents}
           onChangeComponent={onChangeComponent}
+          onMoveComponents={onMoveComponents}
+          onDeleteComponent={onDeleteComponent}
           onChangeViewport={onChangeViewport}
         />
       </div>

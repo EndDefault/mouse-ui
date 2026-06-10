@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-export function useCanvasContextMenu({ onAddComponent }) {
+export function useCanvasContextMenu({ onAddComponent, onDeleteComponent }) {
   const [menu, setMenu] = useState(null);
 
   useEffect(() => {
@@ -36,7 +36,7 @@ export function useCanvasContextMenu({ onAddComponent }) {
   }
 
   function addComponentToContainer(type) {
-    if (!menu) {
+    if (!menu || !menu.canAddChildren) {
       return;
     }
 
@@ -48,10 +48,20 @@ export function useCanvasContextMenu({ onAddComponent }) {
     closeMenu();
   }
 
+  function deleteComponentFromMenu() {
+    if (!menu) {
+      return;
+    }
+
+    onDeleteComponent(menu.componentId);
+    closeMenu();
+  }
+
   return {
     menu,
     openMenu,
     closeMenu,
-    addComponentToContainer
+    addComponentToContainer,
+    deleteComponentFromMenu
   };
 }

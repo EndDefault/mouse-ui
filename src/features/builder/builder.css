@@ -215,7 +215,7 @@
   height: 100%;
   overflow: hidden;
   border: 1px solid #d9d2c7;
-  border-radius: 8px;
+  border-radius: 0;
   background: #dcd7cf;
 }
 
@@ -237,14 +237,22 @@
 
 .canvas-viewport {
   position: relative;
-  border: 1px solid #cfc6ba;
-  border-radius: 8px;
+  border: 0;
+  border-radius: 0;
   background:
     linear-gradient(#f8f6f1 1px, transparent 1px),
     linear-gradient(90deg, #f8f6f1 1px, transparent 1px),
     #ffffff;
   background-size: 24px 24px;
   box-shadow: 0 18px 42px rgba(54, 47, 38, 0.12);
+}
+
+.canvas-selection-box {
+  position: absolute;
+  z-index: 10;
+  border: 1px solid #2f9e8f;
+  background: rgba(47, 158, 143, 0.16);
+  pointer-events: none;
 }
 
 .canvas-empty-state {
@@ -395,6 +403,15 @@
   background: #eef8f5;
 }
 
+.canvas-context-menu button.is-danger {
+  color: #9f2d20;
+}
+
+.canvas-context-menu button.is-danger:hover {
+  border-color: #efb3a9;
+  background: #fff1ee;
+}
+
 .gradient-editor select {
   width: 100%;
 }
@@ -495,6 +512,19 @@
 .code-block code {
   font-family:
     "SFMono-Regular", Consolas, "Liberation Mono", Menlo, monospace;
+}
+
+.code-line {
+  display: block;
+  min-width: max-content;
+  min-height: 1.6em;
+  margin: 0 -14px;
+  padding: 0 14px;
+}
+
+.code-line.is-selected-code {
+  color: #ffffff;
+  background: rgba(240, 111, 71, 0.42);
 }
 
 .code-empty {

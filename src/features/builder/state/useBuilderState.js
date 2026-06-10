@@ -10,7 +10,7 @@ import { normalizeProject } from "../storage/projectSerializer.js";
 
 export function useBuilderState() {
   const [project, setProject] = useState(() => loadBuilderProject());
-  const { canvas, components, selectedId } = project;
+  const { canvas, components, selectedId, selectedIds } = project;
 
   useEffect(() => {
     saveBuilderProject(project);
@@ -30,7 +30,8 @@ export function useBuilderState() {
       return touchProject({
         ...currentProject,
         components: [...currentProject.components, component],
-        selectedId: component.id
+        selectedId: component.id,
+        selectedIds: [component.id]
       });
     });
   }
@@ -38,8 +39,24 @@ export function useBuilderState() {
   function selectComponent(id) {
     setProject((currentProject) => ({
       ...currentProject,
-      selectedId: id
+      selectedId: id,
+      selectedIds: id ? [id] : []
     }));
+  }
+
+  function selectComponents(ids) {
+    setProject((currentProject) => {
+      const componentIds = new Set(
+        currentProject.components.map((component) => component.id)
+      );
+      const nextSelectedIds = ids.filter((id) => componentIds.has(id));
+
+      return {
+        ...currentProject,
+        selectedId: nextSelectedIds[0] ?? null,
+        selectedIds: nextSelectedIds
+      };
+    });
   }
 
   function changeComponent(id, patch) {
@@ -47,6 +64,50 @@ export function useBuilderState() {
       ...touchProject(currentProject),
       components: updateComponent(currentProject.components, id, patch)
     }));
+  }
+
+  function moveComponents(ids, delta) {
+    setProject((currentProject) => {
+      const movableIds = new Set(getMovableIds(ids, currentProject.components));
+
+      if (movableIds.size === 0) {
+        return currentProject;
+      }
+
+      return touchProject({
+        ...currentProject,
+        components: currentProject.components.map((component) => {
+          if (!movableIds.has(component.id)) {
+            return component;
+          }
+
+          return {
+            ...component,
+            x: Math.max(0, component.x + delta.x),
+            y: Math.max(0, component.y + delta.y)
+          };
+        })
+      });
+    });
+  }
+
+  function deleteComponent(id) {
+    setProject((currentProject) => {
+      const deletedIds = getComponentFamilyIds(id, currentProject.components);
+      const nextComponents = currentProject.components.filter(
+        (component) => !deletedIds.has(component.id)
+      );
+      const nextSelectedIds = currentProject.selectedIds.filter(
+        (selectedComponentId) => !deletedIds.has(selectedComponentId)
+      );
+
+      return touchProject({
+        ...currentProject,
+        components: nextComponents,
+        selectedId: nextSelectedIds[0] ?? null,
+        selectedIds: nextSelectedIds
+      });
+    });
   }
 
   function changeCanvasSize(nextCanvas) {
@@ -89,13 +150,57 @@ export function useBuilderState() {
     canvas,
     components,
     selectedId,
+    selectedIds,
     addComponent,
     selectComponent,
+    selectComponents,
     changeComponent,
+    moveComponents,
+    deleteComponent,
     changeCanvasSize,
     changeCanvasViewport,
     importProject
   };
+}
+
+function getComponentFamilyIds(id, components) {
+  const ids = new Set([id]);
+  let changed = true;
+
+  while (changed) {
+    changed = false;
+    components.forEach((component) => {
+      if (component.parentId && ids.has(component.parentId) && !ids.has(component.id)) {
+        ids.add(component.id);
+        changed = true;
+      }
+    });
+  }
+
+  return ids;
+}
+
+function getMovableIds(ids, components) {
+  const selectedIds = new Set(ids);
+
+  return ids.filter((id) => !hasSelectedAncestor(id, selectedIds, components));
+}
+
+function hasSelectedAncestor(id, selectedIds, components) {
+  const componentsById = new Map(
+    components.map((component) => [component.id, component])
+  );
+  let parentId = componentsById.get(id)?.parentId;
+
+  while (parentId) {
+    if (selectedIds.has(parentId)) {
+      return true;
+    }
+
+    parentId = componentsById.get(parentId)?.parentId;
+  }
+
+  return false;
 }
 
 function touchProject(project) {
